@@ -13,11 +13,10 @@ import IconComp from '../components/IconComp';
 import colors from '../assets/colors';
 import Button from '../components/Button';
 import * as actions from '../store/actions/actions';
-import Inputbox from '../components/Inputbox';
 import {launchImageLibrary} from 'react-native-image-picker';
 import DisplayNameChangeModal from '../components/DisplayNameChangeModal';
 import {connect} from 'react-redux';
-import { color } from 'react-native-reanimated';
+import AlertModal from '../components/AlertModal';
 
 const {width, height} = Dimensions.get('window');
 
@@ -32,9 +31,7 @@ const Profile = ({navigation, UserReducer, updateUserData}) => {
   );
   // modal state
   const [isModalVisible, setIsModalVisible] = useState(false);
-  console.log('Profile Username: ', UserReducer?.userData?.username);
-  // var matches = displayName?.match(/\b(\w)/g);
-  // var acronym = matches?.join('');
+  const [showAlert, setShowAlert] = useState(false);
 
   // Change Display Name
   const _onPressEditName = () => {
@@ -81,11 +78,12 @@ const Profile = ({navigation, UserReducer, updateUserData}) => {
         : image,
     };
     updateUserData(userData);
+    setShowAlert(true);
   };
   return (
     <View style={styles.container}>
       {/* Header  */}
-      <Header title="Menu" navigation={navigation} />
+      <Header title="Back" showBackBtn={true} navigation={navigation} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Page Heading */}
@@ -175,6 +173,14 @@ const Profile = ({navigation, UserReducer, updateUserData}) => {
           setIsModalVisible={setIsModalVisible}
         />
       )}
+      {showAlert && (
+        <AlertModal
+          title="Saved!"
+          message="Profile informations have been saved and updated successfully."
+          isModalVisible={showAlert}
+          setIsModalVisible={setShowAlert}
+        />
+      )}
     </View>
   );
 };
@@ -194,7 +200,7 @@ const styles = StyleSheet.create({
   },
   usernameWordsStyle: {
     fontSize: width * 0.12,
-    marginBottom:-20,
+    marginBottom: -20,
     color: colors.themePurple1,
     // backgroundColor:'red'
   },

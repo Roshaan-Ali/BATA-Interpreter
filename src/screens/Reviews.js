@@ -11,12 +11,8 @@ const height = Dimensions.get('window').height;
 const Reviews = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <Header title="Back" navigation={navigation} showBackBtn={true}/>
-      <Heading
-        passedStyle={styles.reviewHeading}
-        fontType={'semi-bold'}
-        title="Reviews & Ratings"
-      />
+      <Header title="Back" navigation={navigation} showBackBtn={true} />
+
       <FlatList
         nestedScrollEnabled={true}
         data={dummyReviews}
@@ -27,6 +23,13 @@ const Reviews = ({navigation}) => {
         renderItem={({item, index}) => {
           return <ReviewsMapper item={item} index={index} />;
         }}
+        ListHeaderComponent={() => (
+          <Heading
+            passedStyle={styles.reviewHeading}
+            fontType={'semi-bold'}
+            title="Reviews & Ratings"
+          />
+        )}
       />
     </View>
   );

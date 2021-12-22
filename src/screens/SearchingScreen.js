@@ -17,7 +17,7 @@ import IconComp from '../components/IconComp';
 
 const {width, height} = Dimensions.get('window');
 
-const SearchingScreen = () => {
+const SearchingScreen = ({navigation}) => {
   const key = 'AIzaSyDGCEsILkoCpmz1Gn63Kf754Jmb2YmOMJo';
   const [status, setStatus] = useState('work assigned');
   useEffect(() => {
@@ -25,9 +25,9 @@ const SearchingScreen = () => {
       if (status === 'work assigned') {
         setStatus('arrived');
       } else {
-        setStatus('work done')
+        setStatus('work done');
       }
-    },5000);
+    }, 5000);
   }, [status]);
   return (
     <View style={styles.container}>
@@ -192,7 +192,13 @@ const SearchingScreen = () => {
             </View>
 
             {/* Work Done ✔ */}
-            <View style={styles.workDoneView}>
+            <TouchableOpacity
+              style={styles.workDoneView}
+              activeOpacity={0.9}
+              onPress={() => {
+                console.log('test');
+                navigation.navigate('Home');
+              }}>
               <Heading title="Work Done" passedStyle={styles.workDone} />
               <IconComp
                 type="AntDesign"
@@ -202,7 +208,7 @@ const SearchingScreen = () => {
                   {marginLeft: width * 0.04},
                 ]}
               />
-            </View>
+            </TouchableOpacity>
           </>
         )}
       </View>
