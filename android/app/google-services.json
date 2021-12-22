@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1072953367403",
+    "project_id": "bata-interpreter",
+    "storage_bucket": "bata-interpreter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072953367403:android:450d95015d229f7c180a2e",
+        "android_client_info": {
+          "package_name": "com.bata_interpreter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1072953367403-j4kuvgt8f81r9o5d3icj1imqpc689pe7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZnxh9kBLhlLcm7WL_HJblQV337Ac5t9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1072953367403-j4kuvgt8f81r9o5d3icj1imqpc689pe7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
