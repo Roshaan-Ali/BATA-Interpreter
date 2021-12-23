@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'kotlin-android'
+
+//apply plugin: 'kotlin-android-extensions'
 import com.android.build.OutputFile
 
 /**
@@ -146,6 +149,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName '1.0'
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -173,11 +177,12 @@ android {
             }
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file('my-release-key.keystore')
+                storePassword '123456'
+                keyAlias 'BATA_INT_KEY'
+                keyPassword '123456'
+            }
         }
     }
 
@@ -200,10 +205,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleDynamicVersion
-//    implementation project('react-native-svg')
-    implementation 'com.facebook.react:react-native:+'  // From node_modules
+    implementation 'com.facebook.react:react-native:+'
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
     implementation project(':react-native-vector-icons')
+    implementation 'com.android.support:multidex:1.0.3'
     implementation project(':react-native-splash-screen')
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.google.firebase:firebase-analytics'
