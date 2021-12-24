@@ -16,6 +16,7 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 function Home({navigation, UserReducer}) {
+  const [mapRef, setMapRef] = useState(null);
   let job = {
     _id: 1,
     name: 'Jason Brown',
@@ -115,11 +116,6 @@ function Home({navigation, UserReducer}) {
             activeOpacity={0.7}
             onPress={() => navigation.navigate('Reviews')}>
             <View style={styles.optionImageContainer}>
-              {/* <Image
-                resizeMode="contain"
-                source={require('../assets/Images/r.png')}
-                style={styles.optionImageStyle}
-              /> */}
               <IconComp
                 name="chat"
                 type="Entypo"
@@ -137,9 +133,33 @@ function Home({navigation, UserReducer}) {
         {/* Map  */}
         <View style={styles.map}>
           <MapView
+            ref={ref => {
+              setMapRef(ref);
+            }}
             style={{width: width * 0.8, height: height * 0.36}}
             showsMyLocationButton={true}
             zoomEnabled={true}
+            onMapReady={() => {
+              mapRef.fitToCoordinates([coordinates[0], coordinates[1]], {
+                animated: true,
+                edgePadding: {
+                  top: 150,
+                  right: 50,
+                  bottom: 100,
+                  left: 50,
+                },
+              });
+            }}
+            onLayout={() => {
+              mapRef.animateCamera({
+                center: {
+                  latitude: coordinates[0].latitude,
+                  longitude: coordinates[0].longitude,
+                },
+                heading: 0,
+                pitch: 90,
+              });
+            }}
             scrollEnabled={true}
             initialRegion={{
               latitude: coordinates[0].latitude,
@@ -147,13 +167,17 @@ function Home({navigation, UserReducer}) {
               latitudeDelta: 0.0622,
               longitudeDelta: 0.0121,
             }}
+            followsUserLocation
             onRegionChangeComplete={e => {
-              console.log(e);
+              // console.log(e);
             }}>
             <MapViewDirections
               origin={coordinates[0]}
               destination={coordinates[1]}
-              apikey={'AIzaSyCyY4IPLEvPRxEtaWFcRWHkWG6n0nFYzEE'} // insert your API Key here
+              apikey={
+                'AIzaSyBTsC4XcbDQgH_tBwHdKAUUXyVtdOTL4l0'
+                // 'AIzaSyCyY4IPLEvPRxEtaWFcRWHkWG6n0nFYzEE'
+              } // insert your API Key here
               strokeWidth={4}
               strokeColor="#111111"
             />
@@ -162,6 +186,7 @@ function Home({navigation, UserReducer}) {
           </MapView>
         </View>
 
+        {/* OnGoing Job  */}
         <View style={styles.ongoingJobsView}>
           <Heading
             title="Ongoing Job"

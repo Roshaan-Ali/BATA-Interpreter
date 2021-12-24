@@ -14,12 +14,23 @@ import colors from '../assets/colors';
 import Heading from '../components/Heading';
 import PROFILE_IMAGE from '../assets/Images/profile-image.jpeg';
 import IconComp from '../components/IconComp';
+import MapViewDirections from 'react-native-maps-directions';
 
 const {width, height} = Dimensions.get('window');
 
 const SearchingScreen = ({navigation}) => {
-  const key = 'AIzaSyDGCEsILkoCpmz1Gn63Kf754Jmb2YmOMJo';
   const [status, setStatus] = useState('work assigned');
+  const [mapRef, setMapRef] = useState(null);
+  const [coordinates, setCoordinates] = useState([
+    {
+      latitude: 48.8587741,
+      longitude: 2.2069771,
+    },
+    {
+      latitude: 48.8323785,
+      longitude: 2.3361663,
+    },
+  ]);
   useEffect(() => {
     setTimeout(() => {
       if (status === 'work assigned') {
@@ -33,7 +44,9 @@ const SearchingScreen = ({navigation}) => {
     <View style={styles.container}>
       <StatusBar translucent backgroundColor="transparent" />
       <MapView
-        // ref={mapRef}
+        ref={ref => {
+          setMapRef(ref);
+        }}
         style={{height: height, width: width}}
         showsMyLocationButton={true}
         zoomEnabled={true}
@@ -44,9 +57,43 @@ const SearchingScreen = ({navigation}) => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        onMapReady={() => {
+          mapRef.fitToCoordinates([coordinates[0], coordinates[1]], {
+            animated: true,
+            edgePadding: {
+              top: 150,
+              right: 50,
+              bottom: 100,
+              left: 50,
+            },
+          });
+        }}
+        onLayout={() => {
+          mapRef.animateCamera({
+            center: {
+              latitude: coordinates[0].latitude,
+              longitude: coordinates[0].longitude,
+            },
+            heading: 0,
+            pitch: 90,
+          });
+        }}
         onRegionChangeComplete={e => {
           console.log(e);
-        }}></MapView>
+        }}>
+        <MapViewDirections
+          origin={coordinates[0]}
+          destination={coordinates[1]}
+          apikey={
+            'AIzaSyBTsC4XcbDQgH_tBwHdKAUUXyVtdOTL4l0'
+            // 'AIzaSyCyY4IPLEvPRxEtaWFcRWHkWG6n0nFYzEE'
+          } // insert your API Key here
+          strokeWidth={4}
+          strokeColor="#111111"
+        />
+        <Marker coordinate={coordinates[0]} />
+        <Marker coordinate={coordinates[1]} />
+      </MapView>
 
       {/* Information View  */}
       <View
