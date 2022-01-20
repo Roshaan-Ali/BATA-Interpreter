@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import moment from 'moment';
 import {
   StyleSheet,
@@ -9,207 +9,306 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import {connect} from 'react-redux';
 import colors from '../assets/colors';
-import Heading from '../components/Heading';
-import IconComp from '../components/IconComp';
-import CustomDropdownModal from '../components/CustomDropdownModal';
-import NoteToTranslatorModal from '../components/NoteToTranslatorModal';
 import Button from '../components/Button';
+import Heading from '../components/Heading';
+import LottieView from 'lottie-react-native';
+import IconComp from '../components/IconComp';
+import * as actions from '../store/actions/actions';
+import AppStatusBar from '../components/AppStatusBar';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import CustomDropdownModal from '../components/CustomDropdownModal';
 import ConfirmTranslatorModal from '../components/ConfirmTranslatorModal';
-import Modal from 'react-native-modal';
+import NoteToTranslatorModal from '../components/NoteToTranslatorModal';
+import AlertModal from '../components/AlertModal';
+import Header from '../components/Header';
 
 const {width, height} = Dimensions.get('window');
 
-const LanguageSelection = ({navigation}) => {
-  const [selectedLanguage, setSelectedLanguage] = useState('Spanish (ES)');
-  const [selectedOccasion, setSelectedOccasion] = useState(null);
+const LanguageSelection = ({
+  route,
+  navigation,
+  UserReducer,
+  updateUserData,
+  getAllLanguages,
+  setErrorModal,
+}) => {
+  const [languages, setLangugaes] = useState(UserReducer?.languages);
+  const LIMIT = UserReducer?.languages?.length;
+  const accessToken = UserReducer?.accessToken;
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
   const [showLanguagesDropdown, setShowLanguagesDropdown] = useState(false);
-  const [showOccasionsDropdown, setShowOccasionsDropdown] = useState(false);
-  const [noteToTranslator, setNoteToTranslator] = useState('');
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showNoteToTranslatorModal, setShowNoteToTranslatorModal] =
-    useState(false);
-
-  const languages = [
-    {_id: 1, label: 'Chinese (ES)', value: 'Langugae 1'},
-    {_id: 2, label: 'Porteguese (ES)', value: 'Langugae 2'},
-    {_id: 3, label: 'Russian (ES)', value: 'Langugae 3'},
-    {_id: 4, label: 'Romanian (ES)', value: 'Langugae 5'},
-    {_id: 5, label: 'Spanish (ES)', value: 'Langugae 4'},
-  ];
-
-  const occasions = [
-    {_id: 1, label: 'Christmas Party', value: 'Occasions 1'},
-    {_id: 2, label: 'Halloween Day', value: 'Occasions 2'},
-    {_id: 3, label: 'Thanksgiving', value: 'Occasions 3'},
-    {_id: 4, label: 'Black Friday', value: 'Occasions 4'},
-    {_id: 5, label: 'Independence Day', value: 'Occasions 5'},
-  ];
+  const [showIncompleteFormAlert, setShowIncompleteFormAlert] = useState(false);
+  const [showUpdateFailedModal, setShowUpdateFailedModal] = useState(
+    UserReducer?.errorModal?.status,
+  );
+  const [selectedLanguages, setSelectedLanguages] = useState(
+    UserReducer?.userData?.language,
+  );
+  // console.log(route.params);
 
   const _onLanguageSelectionPress = item => {
-    setSelectedLanguage(item.label);
+    const oldArray = [...selectedLanguages];
+    const index = oldArray.findIndex(x => x.id === selectedOption.id);
+    oldArray[index] = item;
+    setSelectedLanguages(oldArray);
     setShowLanguagesDropdown(false);
   };
 
-  const _onOccasionsSelectionPress = item => {
-    setSelectedOccasion(item.label);
-    setShowOccasionsDropdown(false);
+  const _onNextPress = async () => {
+    setIsLoading(true);
+    if (selectedLanguages.length > 0) {
+      const userData = {
+        first_name: UserReducer?.userData?.first_name,
+        last_name: UserReducer?.userData?.last_name,
+        language: selectedLanguages?.map(ele => ele.id),
+        profile_image: UserReducer?.userData?.profile_image,
+      };
+
+      await updateUserData(userData, accessToken);
+    } else {
+      setShowIncompleteFormAlert(true);
+    }
+    setIsLoading(false);
   };
 
-  const _onNextPress = () => {
-    navigation.navigate('Searching');
+  const _onPressAddInterpreter = () => {
+    const oldArray = [...selectedLanguages];
+    if (selectedLanguages?.length <= LIMIT - 1) {
+      setSelectedLanguages([...oldArray, languages[0]]);
+    } else {
+      return;
+    }
   };
+
+  const _onPressBin = item => {
+    if (selectedLanguages?.length > 1 && selectedLanguages?.length <= LIMIT) {
+      const index = selectedLanguages.findIndex(
+        x => x.id === selectedOption.id,
+      );
+      const oldArray = [...selectedLanguages];
+      oldArray.splice(index, 1);
+      setSelectedLanguages(oldArray);
+    } else {
+      return;
+    }
+  };
+
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status === true) {
+      setShowErrorModal(true);
+    }
+  }, [UserReducer]);
+
+  useEffect(() => {
+    setErrorModal();
+    getAllLanguages();
+  }, []);
+
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status === true) {
+      setShowUpdateFailedModal(true);
+    }
+    if (UserReducer?.errorModal?.status === false) {
+      setShowUpdateFailedModal(false);
+    }
+  }, [UserReducer?.errorModal]);
+
+  const checkAllElements = () => {
+    var deSelectedRows = [...UserReducer?.languages],
+      selectedRows = [...selectedLanguages],
+      ids = new Set(selectedRows.map(({id}) => id));
+
+    deSelectedRows = deSelectedRows.filter(({id}) => !ids.has(id));
+
+    console.log(deSelectedRows);
+    setLangugaes(deSelectedRows);
+  };
+  useEffect(() => {
+    checkAllElements();
+  }, [selectedLanguages]);
+
+  
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Langugae Dropdown  */}
-        <TouchableOpacity
-          style={styles.languageInfoView}
-          activeOpacity={0.7}
-          onPress={() => setShowLanguagesDropdown(true)}>
-          <View style={styles.rowView}>
-            <IconComp
-              type="FontAwesome"
-              name="language"
-              iconStyle={styles.menuStyle}
+      <SafeAreaView style={{flex: 1}}>
+        <AppStatusBar
+          backgroundColor={colors.themePurple1}
+          barStyle="light-content"
+        />
+        <Header showBackBtn={true} navigation={navigation} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Langugae Dropdown  */}
+          <Heading
+            title="Update Languages"
+            passedStyle={styles.heading}
+            fontType="semi-bold"
+          />
+          {selectedLanguages?.map((ele, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.languageInfoView}
+              activeOpacity={0.7}
+              onPress={() => {
+                if (
+                  selectedLanguages?.length < UserReducer?.languages?.length
+                ) {
+                  setSelectedOption(ele);
+                  setShowLanguagesDropdown(true);
+                }
+              }}>
+              <View style={styles.rowView}>
+                <IconComp
+                  type="FontAwesome"
+                  name="language"
+                  iconStyle={styles.menuStyle}
+                />
+                <Heading
+                  title={ele?.language_name ? ele?.language_name : 'Language'}
+                  passedStyle={styles.langInfoText}
+                />
+              </View>
+              <IconComp
+                type="AntDesign"
+                name="caretdown"
+                iconStyle={styles.caretdown}
+              />
+            </TouchableOpacity>
+          ))}
+
+          {/* Selected Languages Translation  */}
+          {selectedLanguages?.map((ele, index) => (
+            <View style={styles.transaltionView} key={index}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <IconComp
+                  type="AntDesign"
+                  name="caretright"
+                  iconStyle={styles.caretRightLanguage}
+                />
+                <Heading
+                  title={ele?.language_name}
+                  passedStyle={styles.translationLanguage}
+                />
+              </View>
+              {selectedLanguages?.length > 1 &&
+                selectedLanguages?.length <= LIMIT && (
+                  <TouchableOpacity
+                    activeOpacity={0.9}
+                    onPress={() => _onPressBin(ele)}>
+                    <IconComp
+                      type="Feather"
+                      name="trash-2"
+                      iconStyle={styles.bin}
+                    />
+                  </TouchableOpacity>
+                )}
+            </View>
+          ))}
+
+          {selectedLanguages?.length <= LIMIT - 1 && (
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => {
+                _onPressAddInterpreter();
+              }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: height * 0.01,
+                marginLeft: width * 0.1,
+              }}>
+              <IconComp
+                type="Ionicons"
+                name="md-add-circle-sharp"
+                iconStyle={{color: colors.themePurple1, fontSize: width * 0.1}}
+              />
+              <Heading
+                title="Add Language"
+                passedStyle={styles.addInterpreter}
+              />
+            </TouchableOpacity>
+          )}
+
+          {isLoading ? (
+            <View style={styles.loadingComponent} activeOpacity={1}>
+              <Heading
+                title="Please Wait"
+                passedStyle={styles.savingText}
+                fontType="semi-bold"
+              />
+              <LottieView
+                speed={1}
+                style={styles.lottieStyles}
+                autoPlay
+                loop
+                source={require('../assets/Lottie/purple-loading-2.json')}
+              />
+            </View>
+          ) : (
+            <Button
+              title="Update"
+              onBtnPress={() => _onNextPress()}
+              btnStyle={styles.nextBtnStyle}
+              isBgColor={false}
+              btnTextStyle={{fontFamily: 'Poppins-SemiBold', color: 'white'}}
             />
-            <Heading
-              title={selectedLanguage ? selectedLanguage : 'Language'}
-              passedStyle={styles.langInfoText}
-            />
-          </View>
-          <IconComp
-            type="AntDesign"
-            name="caretdown"
-            iconStyle={styles.caretdown}
-          />
-        </TouchableOpacity>
+          )}
+        </ScrollView>
 
-        {/* Selected Languages Translation  */}
-        <View style={styles.transaltionView}>
-          <Heading
-            title={'English (ES)'}
-            passedStyle={styles.translationLanguage}
-          />
-          <IconComp
-            type="AntDesign"
-            name="caretright"
-            iconStyle={styles.caretRightLanguage}
-          />
-          <Heading
-            title={selectedLanguage}
-            passedStyle={styles.translationLanguage}
-          />
-        </View>
+        {/* Langugaes Dropdown Modal  */}
 
-        {/* Occasions Button  */}
-        <TouchableOpacity
-          style={styles.btnStyle}
-          activeOpacity={0.8}
-          onPress={() => setShowOccasionsDropdown(true)}>
-          {/* // onPress={() => navigation.navigate('Booking')}> */}
-          <Heading
-            title={selectedOccasion ? selectedOccasion : 'Occasions'}
-            fontType="medium"
-            passedStyle={styles.btnTextStyle}
+        {showLanguagesDropdown && (
+          <CustomDropdownModal
+            array={languages}
+            onPress={_onLanguageSelectionPress}
+            isModalVisible={showLanguagesDropdown}
+            setIsModalVisible={setShowLanguagesDropdown}
           />
-          <IconComp
-            type="AntDesign"
-            name="caretright"
-            iconStyle={styles.caretRight}
+        )}
+
+        {showErrorModal && (
+          <AlertModal
+            title="Submission Error :("
+            message={`Something went wrong.`}
+            isModalVisible={showErrorModal}
+            setIsModalVisible={setShowErrorModal}
           />
-        </TouchableOpacity>
-
-        {/* Note to translator Button  */}
-        <TouchableOpacity
-          style={styles.btnStyle}
-          activeOpacity={0.8}
-          onPress={() => setShowNoteToTranslatorModal(true)}>
-          <Heading
-            title={'Note to translator'}
-            fontType="medium"
-            passedStyle={styles.btnTextStyle}
+        )}
+        {showUpdateFailedModal && (
+          <AlertModal
+            title="Update Failed!"
+            message={UserReducer?.errorModal?.msg}
+            isModalVisible={showUpdateFailedModal}
+            setIsModalVisible={setShowUpdateFailedModal}
+            onPress={() => setErrorModal()}
           />
-          <IconComp
-            type="AntDesign"
-            name="caretright"
-            iconStyle={styles.caretRight}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.approxBox}
-          activeOpacity={0.9}
-          onPress={() => navigation.navigate('ConfirmModal', dummyTranslator)}
-          // onPress={() => setShowConfirmModal(true)}
-        >
-          <Heading title="$800.00 approx." passedStyle={styles.approxLabel} fontType="bold"/>
-          <Heading title="Total time 4 Hours" passedStyle={styles.totalHours} />
-        </TouchableOpacity>
-
-        <Button
-          title="Next"
-          onBtnPress={() => _onNextPress()}
-          btnStyle={styles.nextBtnStyle}
-          isBgColor={false}
-          btnTextStyle={{fontFamily: 'Poppins-SemiBold', color: 'white'}}
-        />
-      </ScrollView>
-
-      {/* Langugaes Dropdown Modal  */}
-      {showLanguagesDropdown && (
-        <CustomDropdownModal
-          array={languages}
-          onPress={_onLanguageSelectionPress}
-          isModalVisible={showLanguagesDropdown}
-          setIsModalVisible={setShowLanguagesDropdown}
-        />
-      )}
-
-      {/*Ocassions Dropdown Modal  */}
-      {showOccasionsDropdown && (
-        <CustomDropdownModal
-          array={occasions}
-          onPress={_onOccasionsSelectionPress}
-          isModalVisible={showOccasionsDropdown}
-          setIsModalVisible={setShowOccasionsDropdown}
-        />
-      )}
-
-      {/* Message To Translator Modal  */}
-      {showNoteToTranslatorModal && (
-        <NoteToTranslatorModal
-          value={noteToTranslator}
-          setValue={setNoteToTranslator}
-          isModalVisible={showNoteToTranslatorModal}
-          setIsModalVisible={setShowNoteToTranslatorModal}
-        />
-      )}
-      {/* <Modal
-        statusBarTranslucent
-        isVisible={showConfirmModal}
-        onBackdropPress={() => setShowConfirmModal(false)}></Modal> */}
-      {/* Confirmation Modal  */}
-      {showConfirmModal && (
-        <ConfirmTranslatorModal
-          data={dummyTranslator}
-          onPress={() => {}}
-          isModalVisible={showConfirmModal}
-          setIsModalVisible={setShowConfirmModal}
-        />
-      )}
+        )}
+      </SafeAreaView>
     </View>
   );
 };
 
-export default LanguageSelection;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+
+export default connect(mapStateToProps, actions)(LanguageSelection);
 
 const styles = StyleSheet.create({
+  heading: {
+    color: colors.themePurple1,
+    marginLeft: width * 0.08,
+    fontSize: width * 0.08,
+    // marginTop: height * 0.04,
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
-    alignItems: 'center',
+    // alignItems: 'center',
   },
   dropdown: {
     marginTop: height * 0.03,
@@ -222,12 +321,13 @@ const styles = StyleSheet.create({
     height: height * 0.085,
   },
   languageInfoView: {
-    marginTop: height * 0.05,
-    marginVertical: height * 0.02,
+    // marginTop: height * 0.05,
+    marginVertical: height * 0.01,
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
     width: width * 0.8,
+    alignSelf: 'center',
     borderRadius: width * 0.04,
     borderWidth: 1.2,
     height: height * 0.084,
@@ -236,13 +336,15 @@ const styles = StyleSheet.create({
   },
   transaltionView: {
     marginVertical: height * 0.02,
-    marginHorizontal: width * 0.08,
+    width: width * 0.75,
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   translationLanguage: {
     fontSize: width * 0.045,
+    textTransform: 'capitalize',
     color: 'black',
   },
   rowView: {
@@ -253,6 +355,12 @@ const styles = StyleSheet.create({
     color: '#5d5d5d',
     fontSize: width * 0.04,
     paddingHorizontal: width * 0.05,
+  },
+  addInterpreter: {
+    color: colors.themePurple1,
+    fontSize: width * 0.045,
+    marginLeft: width * 0.02,
+    marginTop: height * 0.001,
   },
   caretdown: {
     color: '#5d5d5d',
@@ -271,6 +379,11 @@ const styles = StyleSheet.create({
   caretRightLanguage: {
     color: colors.themePurple1,
     fontSize: width * 0.03,
+    marginRight: width * 0.03,
+  },
+  bin: {
+    color: colors.themePurple1,
+    fontSize: width * 0.06,
   },
   langInfoText: {
     color: '#5d5d5d',
@@ -278,6 +391,7 @@ const styles = StyleSheet.create({
   },
   btnStyle: {
     borderRadius: width * 0.04,
+    alignSelf: 'center',
     width: width * 0.8,
     backgroundColor: colors.themeLightPurple,
     paddingVertical: height * 0.03,
@@ -289,6 +403,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   nextBtnStyle: {
+    alignSelf: 'center',
     marginTop: height * 0.03,
     backgroundColor: colors.themePurple1,
     borderRadius: width * 0.07,
@@ -315,12 +430,30 @@ const styles = StyleSheet.create({
     fontSize: width * 0.043,
     color: 'black',
   },
-});
 
-const dummyTranslator = {
-  _id: 1,
-  name: 'michael reimer',
-  type: 'translator',
-  native: 'english',
-  phone: '0800 1234 567',
-};
+  lottieStyles: {
+    height: height * 0.13,
+    position: 'absolute',
+    left: width * 0.11,
+    right: 0,
+    top: height * -0.015,
+  },
+  loadingComponent: {
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: colors.themePurple1,
+    alignSelf: 'center',
+    height: height * 0.08,
+    marginTop: height * 0.03,
+    backgroundColor: colors.themePurple1,
+    borderRadius: width * 0.07,
+    width: width * 0.75,
+  },
+  savingText: {
+    color: 'white',
+    position: 'absolute',
+    left: width * 0.18,
+    top: height * 0.022,
+    fontSize: width * 0.045,
+  },
+});

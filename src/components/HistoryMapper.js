@@ -14,7 +14,7 @@ const HistoryMapper = ({item, index}) => {
       {/* Event Heading  */}
       <View style={styles.headingView}>
         <Heading
-          title={item.occasion}
+          title={item?.occasion?.name}
           passedStyle={styles.occasionText}
           fontType={'semi-bold'}
         />
@@ -27,7 +27,7 @@ const HistoryMapper = ({item, index}) => {
             iconStyle={styles.locationIcon}
           />
           <Heading
-            title={`Initiator:`}
+            title={`Client:`}
             passedStyle={{
               fontSize: width * 0.04,
               color: 'grey',
@@ -35,7 +35,7 @@ const HistoryMapper = ({item, index}) => {
             }}
           />
           <Heading
-            title={item.name}
+            title={item?.client?.first_name}
             passedStyle={{
               fontSize: width * 0.04,
               color: 'black',
@@ -51,7 +51,7 @@ const HistoryMapper = ({item, index}) => {
             iconStyle={styles.locationIcon}
           />
           <Heading
-            title={item.nativeLanguage}
+            title={item?.primary_language?.language_name}
             passedStyle={{
               fontSize: width * 0.04,
               color: 'black',
@@ -67,7 +67,7 @@ const HistoryMapper = ({item, index}) => {
             }}
           />
           <Heading
-            title={item.translationInto}
+            title={item?.translating_language?.language_name}
             passedStyle={{
               fontSize: width * 0.04,
               color: 'black',
@@ -84,7 +84,7 @@ const HistoryMapper = ({item, index}) => {
             iconStyle={styles.locationIcon}
           />
           <Heading
-            title={`${moment(item.startTime).format('MMM/DD/YYYY')}`}
+            title={`${moment(item?.start_date).format('MMM/DD/YYYY')}`}
             passedStyle={{
               fontSize: width * 0.04,
               color: 'black',
@@ -100,7 +100,7 @@ const HistoryMapper = ({item, index}) => {
             }}
           />
           <Heading
-            title={`${moment(item.endTime).format('MMM/DD/YYYY')}`}
+            title={`${moment(item?.end_date).format('MMM/DD/YYYY')}`}
             passedStyle={{
               fontSize: width * 0.04,
               color: 'black',
@@ -117,27 +117,8 @@ const HistoryMapper = ({item, index}) => {
             iconStyle={styles.locationIcon}
           />
           <Heading
-            title={item.translationAddress}
+            title={item?.translation_address}
             passedStyle={styles.locationAddress}
-          />
-        </View>
-
-        <View>
-          <Heading
-            title={`Additional Information:`}
-            passedStyle={{
-              fontSize: width * 0.04,
-              color: 'grey',
-              marginLeft: width * 0.02,
-            }}
-          />
-          <Heading
-            title={item.additionalInformation}
-            passedStyle={{
-              fontSize: width * 0.04,
-              color: 'black',
-              marginLeft: width * 0.02,
-            }}
           />
         </View>
       </View>

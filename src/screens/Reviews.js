@@ -1,25 +1,33 @@
 import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
+import {connect} from 'react-redux';
 import Heading from '../components/Heading';
 import ReviewsMapper from '../components/ReviewsMapper';
 import {color} from 'react-native-reanimated';
 import colors from '../assets/colors';
 import Header from '../components/Header';
+import * as actions from '../store/actions/actions';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Reviews = ({navigation}) => {
+const Reviews = ({navigation, UserReducer, getAllReviews}) => {
+  const reviews = UserReducer?.reviews;
+  const accessToken = UserReducer?.accessToken;
+
+  useEffect(() => {
+    getAllReviews(accessToken);
+  }, []);
   return (
     <View style={styles.container}>
       <Header title="Back" navigation={navigation} showBackBtn={true} />
 
       <FlatList
         nestedScrollEnabled={true}
-        data={dummyReviews}
+        data={reviews}
         contentContainerStyle={styles.flatListStyle}
         vertical
         showsVerticalScrollIndicator={false}
-        keyExtractor={item => item._id.toString()}
+        keyExtractor={item => item.id.toString()}
         renderItem={({item, index}) => {
           return <ReviewsMapper item={item} index={index} />;
         }}
@@ -30,12 +38,29 @@ const Reviews = ({navigation}) => {
             title="Reviews & Ratings"
           />
         )}
+        ListFooterComponent={() =>
+          reviews?.length === 0 && (
+            <Heading
+              title="No reviews given yet."
+              fontType={'semi-bold'}
+              passedStyle={{
+                fontSize: width * 0.045,
+                color: 'black',
+                marginLeft:width * 0.05
+              }}
+            />
+          )
+        }
       />
     </View>
   );
 };
 
-export default Reviews;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+
+export default connect(mapStateToProps, actions)(Reviews);
 
 const styles = StyleSheet.create({
   container: {

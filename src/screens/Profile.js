@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -6,36 +6,69 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  PixelRatio,
 } from 'react-native';
 import Header from '../components/Header';
 import Heading from '../components/Heading';
 import IconComp from '../components/IconComp';
 import colors from '../assets/colors';
+import LottieView from 'lottie-react-native';
 import Button from '../components/Button';
 import * as actions from '../store/actions/actions';
 import {launchImageLibrary} from 'react-native-image-picker';
 import DisplayNameChangeModal from '../components/DisplayNameChangeModal';
 import {connect} from 'react-redux';
 import AlertModal from '../components/AlertModal';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
+import CustomDropdownModal from '../components/CustomDropdownModal';
+import {color} from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
+import {imageUrl} from '../config/config';
 
 const {width, height} = Dimensions.get('window');
 
-const Profile = ({navigation, UserReducer, updateUserData}) => {
+const Profile = ({
+  navigation,
+  UserReducer,
+  updateUserData,
+  updatePhoto,
+  setErrorModal,
+}) => {
+  let p_language = UserReducer?.languages;
+  const accessToken = UserReducer.accessToken;
+  // console.log(JSON.stringify(UserReducer?.userData, null, 2));
   // image state
   const [userImage, setUserImage] = useState(null);
-  const [image, setImage] = useState(UserReducer?.userData?.photo);
+  // const [image, setImage] = useState(UserReducer?.userData?.profile_image);
 
   // display name state
-  const [displayName, setDisplayName] = useState(
-    UserReducer?.userData?.username,
+  const [firstName, setFirstName] = useState(UserReducer?.userData?.first_name);
+  const [lastName, setLastName] = useState(UserReducer?.userData?.last_name);
+
+  const fullName = UserReducer?.userData?.first_name.concat(
+    ` ${UserReducer?.userData?.last_name}`,
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+
+  const [language, setLanguage] = useState(UserReducer?.userData?.language);
   // modal state
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [showFirstNameChangeModal, setShowFirstNameChangeModal] =
+    useState(false);
+  const [showLastNameChangeModal, setShowLastNameChangeModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  // Change Display Name
-  const _onPressEditName = () => {
-    setIsModalVisible(true);
+  const [showUpdateFailedModal, setShowUpdateFailedModal] = useState(
+    UserReducer?.errorModal?.status,
+  );
+  // Change First Name
+  const _onPressEditFirstName = () => {
+    setShowFirstNameChangeModal(true);
+  };
+
+  // Change Last Name
+  const _onPressEditLastName = () => {
+    setShowLastNameChangeModal(true);
   };
 
   // Upload Photo
@@ -64,123 +97,227 @@ const Profile = ({navigation, UserReducer, updateUserData}) => {
         console.log('User tapped custom button: ', response.customButton);
         // SelectMultipleImage()
       } else {
-        setUserImage(response);
+        // setUserImage(
+        //   `data:${response.assets[0].type};base64,${response.assets[0].base64}`,
+        // );
+        // console.log(response.assets[0])
+        setUserImage(response.assets[0]);
       }
     });
   };
 
   // Save Button Function
-  const _onPressSave = () => {
-    let userData = {
-      username: displayName,
-      photo: userImage
-        ? `data:${userImage.assets[0].type};base64,${userImage.assets[0].base64}`
-        : image,
-    };
-    updateUserData(userData);
+  const _onPressSave = async () => {
+    setIsLoading(true);
+    if (userImage !== null) {
+      await updatePhoto(userImage, accessToken);
+      const userData = {
+        first_name: firstName,
+        last_name: lastName,
+        language: UserReducer?.userData?.language?.map(ele => ele?.id),
+        // profile_image:UserReducer?.userData?.profile_image
+      };
+      await updateUserData(userData, accessToken);
+      setUserImage(null);
+    } else {
+      const userData = {
+        first_name: firstName,
+        last_name: lastName,
+        language: UserReducer?.userData?.language?.map(ele => ele?.id),
+        // profile_image:UserReducer?.userData?.profile_image
+      };
+      await updateUserData(userData, accessToken);
+    }
     setShowAlert(true);
+    setIsLoading(false);
   };
+
+  // language selection
+  const _onDropdownSelectionPress = item => {
+    setLanguage(item);
+    setShowLanguageModal(false);
+  };
+
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status === true) {
+      setShowUpdateFailedModal(true);
+    }
+    if (UserReducer?.errorModal?.status === false) {
+      setShowUpdateFailedModal(false);
+    }
+  }, [UserReducer?.errorModal]);
+
   return (
     <View style={styles.container}>
-      {/* Header  */}
-      <Header title="Back" showBackBtn={true} navigation={navigation} />
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Page Heading */}
-        <Heading
-          title="Profile Settings"
-          passedStyle={styles.heading}
-          fontType="semi-bold"
+      <SafeAreaView style={{flex: 1}}>
+        <AppStatusBar
+          backgroundColor={colors.themePurple1}
+          barStyle="light-content"
         />
+        {/* Header  */}
+        <Header title="Back" showBackBtn={true} navigation={navigation} />
 
-        {/* Image Container  */}
-        <View style={styles.boxContainer}>
-          {image || userImage ? (
-            <Image
-              source={{
-                uri: userImage
-                  ? `data:${userImage.assets[0].type};base64,${userImage.assets[0].base64}`
-                  : image,
-              }}
-              style={[StyleSheet.absoluteFill, {borderRadius: 100}]}
-              // style={styles.imageStyle}
-            />
-          ) : (
-            <Heading
-              passedStyle={styles.usernameWordsStyle}
-              title={displayName?.match(/\b(\w)/g).join('')}
-              fontType="extra-bold"
-            />
-          )}
-          <TouchableOpacity
-            style={styles.iconTouchable}
-            onPress={() => uploadPhoto()}>
-            <IconComp
-              name="camera-alt"
-              type={'MaterialIcons'}
-              iconStyle={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Username Container  & Password */}
-        <View style={styles.usernameViewStyle}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Page Heading */}
           <Heading
-            title={
-              displayName.length > 23
-                ? `${displayName.substring(0, 23)}...`
-                : displayName
-            }
-            passedStyle={styles.usernameStyle}
+            title="Profile Settings"
+            passedStyle={styles.heading}
+            fontType="semi-bold"
+          />
+          {/* Image Container  */}
+          <View style={styles.boxContainer}>
+            {UserReducer?.userData?.profile_image || userImage ? (
+              <Image
+                source={{
+                  uri: userImage
+                    ? `data:${userImage.type};base64,${userImage.base64}`
+                    : `${imageUrl}${UserReducer?.userData?.profile_image}`,
+                }}
+                style={[StyleSheet.absoluteFill, {borderRadius: 100}]}
+                // style={styles.imageStyle}
+              />
+            ) : (
+              <Heading
+                passedStyle={styles.usernameWordsStyle}
+                title={fullName?.match(/\b(\w)/g).join('')}
+                fontType="extra-bold"
+              />
+            )}
+            <TouchableOpacity
+              style={styles.iconTouchable}
+              onPress={() => uploadPhoto()}>
+              <IconComp
+                name="camera-alt"
+                type={'MaterialIcons'}
+                iconStyle={styles.icon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Firstname */}
+          <Heading
+            title={'First Name:'}
+            passedStyle={styles.nameLabel}
             fontType="medium"
           />
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => _onPressEditName()}>
-            <IconComp
-              name="pencil"
-              type="MaterialCommunityIcons"
-              iconStyle={styles.pencilIcon}
+          <View style={styles.usernameViewStyle}>
+            <Heading
+              title={
+                firstName.length > 23
+                  ? `${firstName.substring(0, 23)}...`
+                  : firstName
+              }
+              passedStyle={styles.usernameStyle}
+              fontType="medium"
             />
-          </TouchableOpacity>
-        </View>
-        {/* <Inputbox
-          passedStyle={styles.border_line}
-          placeholderTilte="Change Password"
-          placeholderTextColor="rgba(0,0,0,0.7)"
-        />
-        <Inputbox
-          passedStyle={styles.border_line}
-          placeholderTilte="Confirm Password"
-          placeholderTextColor="rgba(0,0,0,0.7)"
-        /> */}
-        {/* Save Button  */}
-        <View style={styles.btnContainer}>
-          <Button
-            title="SAVE"
-            btnStyle={styles.btnStyle}
-            onBtnPress={() => _onPressSave()}
-            btnTextStyle={styles.btnTextColor}
-            isBgColor={false}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => _onPressEditFirstName()}>
+              <IconComp
+                name="pencil"
+                type="MaterialCommunityIcons"
+                iconStyle={styles.pencilIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Last Name */}
+          <Heading
+            title={'Last Name:'}
+            passedStyle={styles.nameLabel}
+            fontType="medium"
           />
-        </View>
-      </ScrollView>
-      {isModalVisible && (
-        <DisplayNameChangeModal
-          value={displayName}
-          setValue={setDisplayName}
-          isModalVisible={isModalVisible}
-          setIsModalVisible={setIsModalVisible}
-        />
-      )}
-      {showAlert && (
-        <AlertModal
-          title="Saved!"
-          message="Profile informations have been saved and updated successfully."
-          isModalVisible={showAlert}
-          setIsModalVisible={setShowAlert}
-        />
-      )}
+          <View style={styles.usernameViewStyle}>
+            <Heading
+              title={
+                lastName.length > 23
+                  ? `${lastName.substring(0, 23)}...`
+                  : lastName
+              }
+              passedStyle={styles.usernameStyle}
+              fontType="medium"
+            />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => _onPressEditLastName()}>
+              <IconComp
+                name="pencil"
+                type="MaterialCommunityIcons"
+                iconStyle={styles.pencilIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Save Button  */}
+          <View style={styles.btnContainer}>
+            {isLoading ? (
+              <TouchableOpacity
+                style={styles.loadingComponent}
+                activeOpacity={1}>
+                <LottieView
+                  speed={1}
+                  style={styles.lottieStyles}
+                  autoPlay
+                  colorFilters={'blue'}
+                  loop
+                  source={require('../assets/Lottie/purple-loading-2.json')}
+                />
+              </TouchableOpacity>
+            ) : (
+              <Button
+                title="SAVE"
+                btnStyle={styles.btnStyle}
+                onBtnPress={() => _onPressSave()}
+                btnTextStyle={styles.btnTextColor}
+                isBgColor={false}
+              />
+            )}
+          </View>
+        </ScrollView>
+        {showFirstNameChangeModal && (
+          <DisplayNameChangeModal
+            value={firstName}
+            setValue={setFirstName}
+            isModalVisible={showFirstNameChangeModal}
+            setIsModalVisible={setShowFirstNameChangeModal}
+          />
+        )}
+        {showLastNameChangeModal && (
+          <DisplayNameChangeModal
+            value={lastName}
+            setValue={setLastName}
+            isModalVisible={showLastNameChangeModal}
+            setIsModalVisible={setShowLastNameChangeModal}
+          />
+        )}
+
+        {showAlert && (
+          <AlertModal
+            title="Saved!"
+            message="Profile informations have been saved and updated successfully."
+            isModalVisible={showAlert}
+            setIsModalVisible={setShowAlert}
+          />
+        )}
+
+        {showLanguageModal && (
+          <CustomDropdownModal
+            array={p_language}
+            onPress={_onDropdownSelectionPress}
+            isModalVisible={showLanguageModal}
+            setIsModalVisible={setShowLanguageModal}
+          />
+        )}
+        {showUpdateFailedModal && (
+          <AlertModal
+            title="Update Failed!"
+            message={UserReducer?.errorModal?.msg}
+            isModalVisible={showUpdateFailedModal}
+            setIsModalVisible={setShowUpdateFailedModal}
+            onPress={() => setErrorModal()}
+          />
+        )}
+      </SafeAreaView>
     </View>
   );
 };
@@ -189,6 +326,23 @@ const mapStateToProps = ({UserReducer}) => {
   return {UserReducer};
 };
 const styles = StyleSheet.create({
+  loadingComponent: {
+    borderRadius: width * 0.02,
+    position: 'relative',
+    backgroundColor: colors.themePurple1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: height * 0.08,
+    width: width * 0.8,
+    marginVertical: height * 0.02,
+  },
+  lottieStyles: {
+    height: height * 0.15,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: height * -0.02,
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
@@ -201,6 +355,7 @@ const styles = StyleSheet.create({
   usernameWordsStyle: {
     fontSize: width * 0.12,
     marginBottom: -20,
+    textTransform: 'uppercase',
     color: colors.themePurple1,
     // backgroundColor:'red'
   },
@@ -231,7 +386,7 @@ const styles = StyleSheet.create({
     marginRight: width * 0.1,
   },
   heading: {
-    color: colors.themePurple1,
+    color: 'black',
     marginLeft: width * 0.08,
     fontSize: width * 0.08,
     marginTop: height * 0.04,
@@ -257,10 +412,17 @@ const styles = StyleSheet.create({
     // paddingHorizontal: width * 0.2,
     // paddingVertical: height * 0.005,
   },
+  nameLabel: {
+    fontSize: height * 0.031,
+    color: 'black',
+    textTransform: 'capitalize',
+    marginHorizontal: width * 0.1,
+  },
   usernameStyle: {
     fontSize: height * 0.031,
     marginRight: width * 0.01,
     color: colors.themePurple1,
+    textTransform: 'capitalize',
   },
   icon: {
     backgroundColor: colors.themePurple1,
@@ -272,8 +434,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: height * 0.19,
     right: width * 0.025,
-    backgroundColor: 'blue',
-    borderRadius: width,
+    // borderRadius: 30 / 0.2,
   },
   border_line: {
     borderBottomWidth: 1,
@@ -289,8 +450,8 @@ const styles = StyleSheet.create({
   usernameViewStyle: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'center',
-    // justifyContent: 'space-between',
+    // justifyContent: 'center',
+    justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderBottomColor: colors.themePurple1,
     marginHorizontal: width * 0.1,

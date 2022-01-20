@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Home from './screens/Home';
 import Booking from './screens/Booking';
@@ -11,16 +11,28 @@ import LanguageSelection from './screens/LanguageSelection';
 import ConfirmTranslatorModal from './components/ConfirmTranslatorModal';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import messaging from '@react-native-firebase/messaging';
-import PushNotification, {Importance} from 'react-native-push-notification'
+import PushNotification, {Importance} from 'react-native-push-notification';
 import Reviews from './screens/Reviews';
+import * as actions from './store/actions/actions';
+import {connect} from 'react-redux';
+
 const HomeStack = createNativeStackNavigator();
-const HomeScreensStack = props => {
+
+const HomeScreensStack = ({navigation, getCurrentBooking, UserReducer}) => {
+  const accessToken = UserReducer?.accessToken;
+  const id = UserReducer?.userData?.id;
   useEffect(() => {
     try {
       messaging()
+        .subscribeToTopic('bata_interpreter' + id.toString())
+        .then(() => {
+          console.log('TOPIC sUBSCRIBED');
+        });
+
+      messaging()
         .getToken()
         .then(token => {
-          console.log(token)
+          console.log(token);
           // setFCMToken(token);
           // console.log(token)
         });
@@ -41,8 +53,12 @@ const HomeScreensStack = props => {
           }
         });
       const unsubscribe = messaging().onMessage(async remoteMessage => {
-        console.log(remoteMessage, '');
+        console.log(remoteMessage, 'Notification');
 
+        // Call api to get current booking data
+        if (remoteMessage?.data?.type == 'accepted') {
+          getCurrentBooking(accessToken);
+        }
         if (remoteMessage.notification) {
           PushNotification.localNotification({
             channelId: 'channel-id',
@@ -65,54 +81,40 @@ const HomeScreensStack = props => {
     <HomeStack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="Home">
-      <HomeStack.Screen name="Home" component={Home} {...props.navigation} />
+      <HomeStack.Screen name="Home" component={Home} {...navigation} />
       <HomeStack.Screen
         name="Language"
         component={LanguageSelection}
-        {...props.navigation}
+        {...navigation}
       />
-      <HomeStack.Screen
-        name="Packages"
-        component={Packages}
-        {...props.navigation}
-      />
+      <HomeStack.Screen name="Packages" component={Packages} {...navigation} />
       <HomeStack.Screen
         name="Translator"
         component={Translators}
-        {...props.navigation}
+        {...navigation}
       />
-      <HomeStack.Screen
-        name="Booking"
-        component={Booking}
-        {...props.navigation}
-      />
+      <HomeStack.Screen name="Booking" component={Booking} {...navigation} />
       <HomeStack.Screen
         name="Interpreter"
         component={Interpreter}
-        {...props.navigation}
+        {...navigation}
       />
       <HomeStack.Screen
         name="Searching"
         component={SearchingScreen}
-        {...props.navigation}
+        {...navigation}
       />
-      <HomeStack.Screen
-        name="Reviews"
-        component={Reviews}
-        {...props.navigation}
-      />
+      <HomeStack.Screen name="Reviews" component={Reviews} {...navigation} />
       <HomeStack.Screen
         name="ConfirmModal"
         component={ConfirmTranslatorModal}
-        {...props.navigation}
+        {...navigation}
       />
-      <HomeStack.Screen
-        name="Profile"
-        component={Profile}
-        {...props.navigation}
-      />
+      <HomeStack.Screen name="Profile" component={Profile} {...navigation} />
     </HomeStack.Navigator>
   );
 };
-
-export default HomeScreensStack;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(HomeScreensStack);

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import BataInformation from './screens/BataInformation';
 import CustomDrawer from './CustomDrawer';
-import Subscription from './screens/ChangePhoneNo';
+import LanguageSelection from './screens/LanguageSelection';
 import HomeScreensStack from './HomeScreensStack';
 import messaging from '@react-native-firebase/messaging';
 import {useNavigation} from '@react-navigation/native';
@@ -10,12 +10,29 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import ChangeLanguage from './screens/ChangeLanguage';
 import ChangePhoneNo from './screens/ChangePhoneNo';
 import History from './screens/History';
+import * as actions from './store/actions/actions';
+import {connect} from 'react-redux';
 const Drawer = createDrawerNavigator();
 
-const MainAppScreens = ({navigation}) => {
+const MainAppScreens = ({
+  UserReducer,
+  getAllReviews,
+  getAllLanguages,
+  getCurrentBooking,
+  getBookingHistory,
+  getReviewsAndRatingsCount,
+}) => {
   const [loading, setLoading] = useState(false);
-  const [FCMToken, setFCMToken] = useState(null);
   const [initialRoute, setInitialRoute] = useState('Home');
+  const accessToken = UserReducer?.accessToken;
+
+  useEffect(() => {
+    getAllLanguages();
+    getAllReviews(accessToken);
+    getCurrentBooking(accessToken);
+    getBookingHistory(accessToken);
+    getReviewsAndRatingsCount(accessToken);
+  }, []);
 
   const routes = [
     {
@@ -36,13 +53,13 @@ const MainAppScreens = ({navigation}) => {
       iconType: 'FontAwesome',
       routeName: 'change language',
     },
-    {
-      id: 3,
-      iconName: 'phone',
-      iconType: 'FontAwesome',
-      routeName: 'change phone no.',
-    },
-   
+    // {
+    //   id: 3,
+    //   iconName: 'phone',
+    //   iconType: 'FontAwesome',
+    //   routeName: 'change phone no.',
+    // },
+
     {
       id: 4,
       iconName: 'info',
@@ -88,7 +105,7 @@ const MainAppScreens = ({navigation}) => {
           );
         }}>
         <Drawer.Screen name="home" component={HomeScreensStack} />
-        <Drawer.Screen name="change language" component={ChangeLanguage} />
+        <Drawer.Screen name="change language" component={LanguageSelection} />
         <Drawer.Screen name="BATA information" component={BataInformation} />
         <Drawer.Screen name="change phone no." component={ChangePhoneNo} />
         <Drawer.Screen name="history" component={History} />
@@ -97,4 +114,7 @@ const MainAppScreens = ({navigation}) => {
   }
 };
 
-export default MainAppScreens;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(MainAppScreens);

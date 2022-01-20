@@ -12,11 +12,20 @@ import {
 import colors from '../assets/colors';
 import Heading from './Heading';
 import Inputbox from './Inputbox';
+import LottieView from 'lottie-react-native';
 import Button from './Button';
 
 const {width, height} = Dimensions.get('window');
 
-const AlertModal = ({title, message, isModalVisible, setIsModalVisible}) => {
+const AlertModal = ({
+  title,
+  message,
+  isModalVisible,
+  setIsModalVisible,
+  buttonText,
+  onPress,
+  showLoader,
+}) => {
   return (
     <View>
       <StatusBar translucent={false} backgroundColor="black" />
@@ -28,18 +37,40 @@ const AlertModal = ({title, message, isModalVisible, setIsModalVisible}) => {
             fontType="semi-bold"
           />
 
-          {message && <Heading passedStyle={styles.message} title={message} />}
+          {message?.length > 0 && (
+            <Heading passedStyle={styles.message} title={message} />
+          )}
           {/* Buttons Container  */}
           <View style={styles.flexRow}>
-            <Button
-              title="OK"
-              onBtnPress={() => {
-                setIsModalVisible(false);
-              }}
-              isBgColor={false}
-              btnStyle={styles.btnStyle}
-              btnTextStyle={styles.btnTextStyle}
-            />
+            {showLoader ? (
+              <View style={styles.requestingView}>
+                <LottieView
+                  speed={1}
+                  style={styles.lottieStyle}
+                  autoPlay
+                  loop
+                  source={require('../assets/Lottie/purple-loading-2.json')}
+                />
+                <Heading
+                  title="Please Wait..."
+                  passedStyle={styles.requestLabel}
+                />
+              </View>
+            ) : (
+              <Button
+                title={buttonText || 'OK'}
+                onBtnPress={() => {
+                  if (onPress) {
+                    onPress();
+                  } else {
+                    setIsModalVisible(false);
+                  }
+                }}
+                isBgColor={false}
+                btnStyle={styles.btnStyle}
+                btnTextStyle={styles.btnTextStyle}
+              />
+            )}
 
             {/* <Button
               title="CANCEL"
@@ -87,7 +118,7 @@ const styles = StyleSheet.create({
   btnStyle: {
     backgroundColor: colors.themePurple1,
     borderRadius: width * 0.025,
-    width: width * 0.35,
+    // width: width * 0.35,
     margin: 0,
   },
   cancelBtnStyle: {
@@ -112,7 +143,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    width: width * 0.75,
+    // width: width * 0.75,
+    minWidth: width * 0.75,
   },
   inputField: {
     marginVertical: height * 0.03,
@@ -126,5 +158,29 @@ const styles = StyleSheet.create({
     paddingVertical: height * 0.025,
     textAlignVertical: 'top',
     fontFamily: 'Poppins-Regular',
+  },
+  requestingView: {
+    backgroundColor: 'white',
+    borderRadius: width * 0.025,
+    paddingVertical: height * 0.015,
+    width: width * 0.75,
+    flexDirection: 'row',
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: colors.themePurple1,
+  },
+  lottieStyle: {
+    height: height * 0.13,
+    position: 'absolute',
+    marginVertical: -30,
+    bottom: height * 0.032,
+    left: width * 0.01,
+  },
+  requestLabel: {
+    color: colors.themePurple1,
+    fontSize: width * 0.05,
+    marginLeft: width * 0.08,
+    fontFamily: 'Poppins-SemiBold',
   },
 });

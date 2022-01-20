@@ -143,6 +143,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    lintOptions {
+        checkReleaseBuilds false
+    }
     defaultConfig {
         applicationId 'com.bata_interpreter'
         minSdkVersion rootProject.ext.minSdkVersion
@@ -170,19 +173,14 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            if (nativeArchitectures) {
-                ndk {
-                    abiFilters nativeArchitectures.split(',')
-                }
-            }
         }
         release {
-            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file('my-release-key.keystore')
-                storePassword '123456'
-                keyAlias 'BATA_INT_KEY'
-                keyPassword '123456'
-            }
+            aaptOptions { cruncherEnabled = false }
+            minifyEnabled true
+            signingConfig signingConfigs.debug
+            minifyEnabled enableProguardInReleaseBuilds
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+
         }
     }
 

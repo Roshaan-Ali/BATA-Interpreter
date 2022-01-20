@@ -11,17 +11,15 @@ import {MotiView} from 'moti';
 import * as actions from '../store/actions/actions';
 import {connect} from 'react-redux';
 import IconComp from '../components/IconComp';
+import {imageUrl} from '../config/config';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 function Home({navigation, UserReducer}) {
+  const currentBooking = UserReducer?.currentBooking;
   const [mapRef, setMapRef] = useState(null);
-  let job = {
-    _id: 1,
-    name: 'Jason Brown',
-    type: 'mechanic',
-  };
+
   const [coordinates, setCoordinates] = useState([
     {
       latitude: 48.8587741,
@@ -32,15 +30,9 @@ function Home({navigation, UserReducer}) {
       longitude: 2.3361663,
     },
   ]);
-  const [username, setUsername] = useState(
-    UserReducer?.userData?.username?.split(' ')[0],
-  );
+  const username = UserReducer?.userData?.first_name;
 
-  console.log(UserReducer?.userData);
-  const _onPaymentCardPress = () => {
-    console.log('Payment Card Selected');
-  };
-
+  console.log(UserReducer?.totalReviews);
   return (
     <View style={styles.container}>
       {/* Header  */}
@@ -99,7 +91,12 @@ function Home({navigation, UserReducer}) {
               />
               <Heading
                 passedStyle={styles.myRatings}
-                title={'4.2/5.0'}
+                title={`${
+                  UserReducer?.totalRatings === undefined ||
+                  UserReducer?.totalRatings === null
+                    ? 0
+                    : parseFloat(UserReducer?.totalRatings)?.toFixed(1)
+                }/5.0`}
                 fontType="medium"
               />
             </View>
@@ -124,7 +121,7 @@ function Home({navigation, UserReducer}) {
             </View>
             <Heading
               passedStyle={styles.textStyle}
-              title={'Reviews'}
+              title={`${UserReducer?.totalReviews} Reviews`}
               fontType="regular"
             />
           </TouchableOpacity>
@@ -194,26 +191,41 @@ function Home({navigation, UserReducer}) {
             passedStyle={styles.ongoingLabel}
           />
 
-          {job ? (
+          {currentBooking ? (
             <TouchableOpacity
               style={styles.popUpBoxContainer}
               activeOpacity={0.8}
-              onPress={() => navigation.navigate('Searching')}>
-              <View style={styles.rowView}>
+              // onPress={() => navigation.navigate('Searching')}
+            >
+              <View style={[styles.rowView, {width:width * 0.57,}]}>
                 <Image
-                  resizeMode="contain"
-                  source={require('../assets/Images/profile-image.jpeg')}
-                  style={{width: width * 0.13, borderRadius: 70}}
+                  // resizeMode="contain"
+                  source={
+                    // currentBooking?.client?.profile_image !== undefined &&
+                    // currentBooking?.client?.profile_image !== null &&
+                    // currentBooking?.client?.profile_image !== ""
+                    //   ? {
+                    //       uri: `${imageUrl}${currentBooking?.client?.profile_image}`,
+                    //     }
+                    //   :
+                    require('../assets/Images/Logo.png')
+                  }
+                  style={{
+                    width: width * 0.13,
+                    // backgroundColor:'red',
+                    borderRadius: width * 0.7,
+                    height: height * 0.07,
+                  }}
                 />
                 <View>
                   <Heading
                     passedStyle={styles.popUpText}
-                    title={'Jason Brown'}
+                    title={currentBooking?.client?.first_name}
                     fontType="bold"
                   />
                   <Heading
                     passedStyle={styles.textMechanic}
-                    title={'Work Assigned'}
+                    title={currentBooking?.translation_address}
                     fontType="medium"
                   />
                 </View>
@@ -265,6 +277,7 @@ const styles = StyleSheet.create({
   noJobTitle: {
     fontSize: width * 0.05,
     marginLeft: width * 0.02,
+    color: 'black',
   },
   noJobImage: {
     width: width * 0.1,
@@ -350,6 +363,7 @@ const styles = StyleSheet.create({
   },
   heading_username: {
     color: colors.themePurple1,
+    textTransform: 'capitalize',
     fontSize: width * 0.11,
     marginTop: height * -0.03,
   },
@@ -401,7 +415,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.04,
     justifyContent: 'space-between',
     borderRadius: width * 0.02,
-    height: height * 0.13,
+    // height: height * 0.15,
+    paddingVertical: height * 0.02,
     width: width * 0.85,
     alignItems: 'center',
     shadowColor: '#000',
@@ -426,6 +441,7 @@ const styles = StyleSheet.create({
   popUpText: {
     fontSize: height * 0.025,
     color: 'black',
+    textTransform:'capitalize',
     marginLeft: width * 0.03,
   },
   leftIconStyle: {

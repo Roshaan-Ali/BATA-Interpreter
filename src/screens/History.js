@@ -14,12 +14,15 @@ import Heading from '../components/Heading';
 import IconComp from '../components/IconComp';
 import colors from '../assets/colors';
 import HistoryMapper from '../components/HistoryMapper';
+import {connect} from 'react-redux';
 const {width, height} = Dimensions.get('window');
 
-const History = props => {
+const History = ({navigation, UserReducer}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
-
+  const history =    UserReducer?.bookingHistory;
+  console.log(JSON.stringify(history,null,2))
+  // UserReducer?.bookingHistory;
   const onItemPress = (item, index) => {
     setModalData(item);
     setIsModalVisible(true);
@@ -29,13 +32,13 @@ const History = props => {
     <>
       <View style={styles.container}>
         {/* Header  */}
-        <Header showBackBtn={true} navigation={props.navigation} />
+        <Header showBackBtn={true} navigation={navigation} />
 
         <FlatList
-          data={dummyData}
+          data={history}
           vertical
           showsVerticalScrollIndicator={false}
-          keyExtractor={item => item._id.toString()}
+          keyExtractor={item => item?.id?.toString()}
           contentContainerStyle={styles.flatListContentContainerStyle}
           renderItem={({item, index}) => (
             <HistoryMapper item={item} index={index} />
@@ -47,6 +50,20 @@ const History = props => {
               fontType="bold"
             />
           )}
+          ListFooterComponent={() =>
+            history?.length === 0 && (
+              <Heading
+                title="No completed events."
+                fontType={'semi-bold'}
+                passedStyle={{
+                  fontSize: width * 0.045,
+                  marginTop:height * 0.02,
+                  color: 'black',
+                  alignSelf:'center'
+                }}
+              />
+            )
+          }
         />
       </View>
       {isModalVisible && (
@@ -60,7 +77,10 @@ const History = props => {
   );
 };
 
-export default History;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, null)(History);
 
 const styles = StyleSheet.create({
   container: {

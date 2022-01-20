@@ -11,24 +11,35 @@ import Heading from './Heading';
 import {Rating} from 'react-native-ratings';
 import moment from 'moment';
 import colors from '../assets/colors';
+import {imageUrl} from '../config/config';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const ReviewsMapper = ({item, index}) => {
   const [showMore, setShowMore] = useState(false);
+
   return (
     <View style={styles.container}>
       {/* Name and Image  */}
       <View style={styles.imageAndNameContainer}>
-        <Image source={item.photo} style={styles.photo} resizeMode="contain" />
+        {console.log(`${imageUrl}${item?.client?.profile_image}`)}
+        <Image
+          source={
+            item?.client?.profile_image !== undefined
+              ? {uri: `${imageUrl}${item?.client?.profile_image}`}
+              : 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg'
+          }
+          style={styles.photo}
+          // resizeMode="contain"
+        />
         <View style={{justifyContent: 'center', marginLeft: width * 0.03}}>
           <Heading
-            title={item.name}
+            title={item?.client?.first_name}
             fontType="medium"
             passedStyle={styles.name}
           />
           <Heading
-            title={moment(item.createdAt).fromNow()}
+            title={moment(item?.created_at).fromNow()}
             fontType="medium"
             passedStyle={styles.date}
           />
@@ -38,23 +49,27 @@ const ReviewsMapper = ({item, index}) => {
       {/* Review Message  */}
       <Heading
         title={
-          item.reviewMessage.length > 125 && !showMore
-            ? `${item.reviewMessage.substring(0, 125)}...`
-            : item.reviewMessage
+          item?.comment?.length > 125 && !showMore
+            ? `${item?.comment?.substring(0, 125)}...`
+            : item?.comment
         }
         fontType="regular"
         passedStyle={styles.reviewMessage}
       />
-      <TouchableOpacity activeOpacity={0.8} onPress={() => setShowMore(!showMore)}>
-        <Heading
-          title={
-            item.reviewMessage.length > 125 && !showMore
-              ? 'Read More'
-              : 'Read Less'
-          }
-          passedStyle={styles.showmore}
-        />
-      </TouchableOpacity>
+      {item?.comment?.length > 50 && (
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => setShowMore(!showMore)}>
+          <Heading
+            title={
+              item?.comment?.length > 125 && !showMore
+                ? 'Read More'
+                : 'Read Less'
+            }
+            passedStyle={styles.showmore}
+          />
+        </TouchableOpacity>
+      )}
 
       {/* Ratings  */}
       <View style={styles.ratingsView}>
@@ -64,10 +79,10 @@ const ReviewsMapper = ({item, index}) => {
           imageSize={25}
           readonly={true}
           tintColor="rgba(242, 241, 241, 1)"
-          startingValue={item.ratings}
+          startingValue={item?.rate}
         />
         <Heading
-          title={`${item.ratings} out of 5`}
+          title={`${item?.rate} out of 5`}
           fontType="regular"
           passedStyle={styles.ratingCount}
         />
@@ -103,11 +118,12 @@ const styles = StyleSheet.create({
   photo: {
     width: width * 0.14,
     height: width * 0.14,
-    borderRadius: width * 0.18,
+    borderRadius: width * 0.5,
     // backgroundColor:'red'
   },
   name: {
     fontSize: width * 0.045,
+    textTransform: 'capitalize',
     color: 'black',
   },
   ratingCount: {
