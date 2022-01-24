@@ -45,7 +45,7 @@ const Header = ({navigation, showBackBtn = false, title, UserReducer}) => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => navigation.navigate('Profile')}>
-          {userImage !== undefined || userImage !== null ? (
+          {userImage !== undefined && userImage !== null && userImage !== '' ? (
             <Image
               // resizeMode="contain"
               source={{

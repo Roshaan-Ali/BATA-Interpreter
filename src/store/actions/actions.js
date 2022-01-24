@@ -1,6 +1,8 @@
 import * as types from './actionType';
 import axios from 'axios';
 import {apiUrl} from '../../config/config';
+// import Geolocation from 'react-native-geolocation-service';
+import Geolocation from "@react-native-community/geolocation";
 
 export const user_login = data => async dispatch => {
   console.log(data);
@@ -203,6 +205,7 @@ export const getReviewsAndRatingsCount = token => async dispatch => {
         },
       },
     );
+    console.log(res.data);
     dispatch({
       type: types.GET_REVIEWS_RATINGS_COUNT,
       payload: res.data.data,
@@ -292,5 +295,75 @@ export const getBookingHistory = token => async dispatch => {
     }
   } catch (err) {
     console.log('Failed to fetch history booking!', err);
+  }
+};
+
+export const getCurrentLocation = () => async (dispatch) => {
+  try {
+    // dispatch({
+    //   type: types.GET_CURRENT_LOC,
+    //   payload: {
+    //     lat: "24.9180588",
+    //     lng: "67.0947953"
+    //   },
+    // });
+
+    Geolocation.getCurrentPosition(
+      //Will give you the current location
+      (position) => {
+        console.log(position, "ACTION");
+        //getting the Longitude from the location json
+        const currentLongitude = JSON.stringify(position.coords.longitude);
+
+        //getting the Latitude from the location json
+        const currentLatitude = JSON.stringify(position.coords.latitude);
+
+        dispatch({
+          type: types.GET_CURRENT_LOC,
+          payload: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+        });
+
+        //Setting Longitude state
+        // setCurrentLongitude(currentLongitude);
+
+        // //Setting Longitude state
+        // setCurrentLatitude(currentLatitude);
+      },
+      (error) => {
+        console.log(error.message);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 1000,
+      }
+    );
+    // const config = {
+    //   enableHighAccuracy: true,
+    //   timeout: 200000,
+    //   maximumAge: 3600000,
+    // };
+
+    // Geolocation.getCurrentPosition(
+    //   info => {
+    //     console.log("AHSAN", info)
+    //     dispatch({
+    //       type: types.GET_CURRENT_LOC,
+    //       payload: {
+    //         lat: info.coords.latitude,
+    //         lng: info.coords.longitude,
+    //       },
+    //     });
+    //   },
+    //   err => {
+    //     console.log(err, "ERROR")
+    //   },
+    //   config,
+    // );
+  } catch (err) {
+    console.log(err);
   }
 };

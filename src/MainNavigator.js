@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, StatusBar} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  Platform,
+  PermissionsAndroid,
+  BackHandler,
+} from 'react-native';
 import colors from './assets/colors';
 import AuthRootStackScreen from './AuthRootStackScreen';
 import TextSample from './components/TextSample';
@@ -12,11 +20,44 @@ import {
 import {NavigationContainer} from '@react-navigation/native';
 import {connect} from 'react-redux';
 // import * as actions from './store/actions/actions';
+import messaging from '@react-native-firebase/messaging';
+import {useEffect} from 'react';
 
-function Main({userLogin, UserReducer}) {
-  const [token, onChangeToken] = useState(null);
+function Main({UserReducer}) {
   const [loading, setLoading] = useState(false);
+  const id = UserReducer?.userData?.id;
 
+  async function requestLocationPermission() {
+    try {
+      const platformCheck = Platform.OS;
+      if (platformCheck != 'ios') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          
+        } else {
+          BackHandler.exitApp();
+        }
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  useEffect(() => {
+    requestLocationPermission();
+  }, []);
+
+  useEffect(() => {
+    if (UserReducer?.isUserLogin === true) {
+      messaging()
+        .subscribeToTopic('bata_interpreter' + id?.toString())
+        .then(() => {
+          console.log('TOPIC SUBSCRIBED');
+        });
+    }
+  }, [UserReducer?.isUserLogin]);
   if (loading) {
     return (
       <View style={styles.lottieContainer}>

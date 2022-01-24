@@ -16,7 +16,7 @@ import org.devio.rn.splashscreen.SplashScreen;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.facebook.react.bridge.JSIModulePackage;
 import com.swmansion.reanimated.ReanimatedJSIModulePackage;
-
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -33,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
             new ReactNativePushNotificationPackage();
             new VectorIconsPackage();
             new SplashScreenReactPackage();
+            new GeolocationPackage();
             new MapsPackage();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());

@@ -207,6 +207,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
     implementation project(':react-native-vector-icons')
     implementation 'com.android.support:multidex:1.0.3'
+    implementation project(':react-native-community-geolocation')
     implementation project(':react-native-splash-screen')
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'com.google.firebase:firebase-analytics'

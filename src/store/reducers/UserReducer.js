@@ -12,6 +12,7 @@ import {
   LOGIN_FAILED,
   BOOKING_HISTORY,
   UPDATE_PHOTO,
+  GET_CURRENT_LOC,
 } from '../actions/actionType';
 
 const initialData = {
@@ -22,7 +23,10 @@ const initialData = {
   },
   userData: null,
   accessToken: '',
-  coords: null,
+  coords: {
+    lat: 48.8584,
+    lng: 2.2945
+  },
   errorModal: {
     status: false,
     msg: '',
@@ -45,6 +49,12 @@ export function UserReducer(state = initialData, action) {
           msg: '',
         },
         ...action.payload,
+      };
+
+    case GET_CURRENT_LOC:
+      return {
+        ...state,
+        coords: action.payload,
       };
 
     case LOGIN_FAILED:
@@ -86,7 +96,7 @@ export function UserReducer(state = initialData, action) {
       };
 
     case GET_REVIEWS_RATINGS_COUNT:
-      console.log(action.payload)
+      console.log(action.payload);
       return {
         ...state,
         totalRatings: action.payload.rate,

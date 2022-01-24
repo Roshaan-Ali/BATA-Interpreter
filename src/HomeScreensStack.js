@@ -18,63 +18,16 @@ import {connect} from 'react-redux';
 
 const HomeStack = createNativeStackNavigator();
 
-const HomeScreensStack = ({navigation, getCurrentBooking, UserReducer}) => {
+const HomeScreensStack = ({
+  navigation,
+  getCurrentBooking,
+  UserReducer,
+  getCurrentLocation,
+}) => {
   const accessToken = UserReducer?.accessToken;
   const id = UserReducer?.userData?.id;
   useEffect(() => {
-    try {
-      messaging()
-        .subscribeToTopic('bata_interpreter' + id.toString())
-        .then(() => {
-          console.log('TOPIC sUBSCRIBED');
-        });
-
-      messaging()
-        .getToken()
-        .then(token => {
-          console.log(token);
-          // setFCMToken(token);
-          // console.log(token)
-        });
-      messaging().onNotificationOpenedApp(remoteMessage => {
-        console.log(
-          'Notification caused app to open from background state:',
-          remoteMessage.notification,
-        );
-      });
-      messaging()
-        .getInitialNotification()
-        .then(remoteMessage => {
-          if (remoteMessage) {
-            console.log(
-              'Notification caused app to open from quit state:',
-              remoteMessage.notification,
-            );
-          }
-        });
-      const unsubscribe = messaging().onMessage(async remoteMessage => {
-        console.log(remoteMessage, 'Notification');
-
-        // Call api to get current booking data
-        if (remoteMessage?.data?.type == 'accepted') {
-          getCurrentBooking(accessToken);
-        }
-        if (remoteMessage.notification) {
-          PushNotification.localNotification({
-            channelId: 'channel-id',
-            channelName: 'My channel',
-            message: remoteMessage.notification.body,
-            playSound: true,
-            title: remoteMessage.notification.title,
-            priority: 'high',
-            soundName: 'default',
-          });
-        }
-      });
-      return unsubscribe;
-    } catch (e) {
-      console.log(e);
-    }
+    getCurrentLocation();
   }, []);
 
   return (

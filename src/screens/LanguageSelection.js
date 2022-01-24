@@ -40,7 +40,7 @@ const LanguageSelection = ({
   const [isLoading, setIsLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
-
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showLanguagesDropdown, setShowLanguagesDropdown] = useState(false);
   const [showIncompleteFormAlert, setShowIncompleteFormAlert] = useState(false);
   const [showUpdateFailedModal, setShowUpdateFailedModal] = useState(
@@ -53,7 +53,7 @@ const LanguageSelection = ({
 
   const _onLanguageSelectionPress = item => {
     const oldArray = [...selectedLanguages];
-    const index = oldArray.findIndex(x => x.id === selectedOption.id);
+    const index = oldArray.findIndex(x => x.id === selectedOption?.id);
     oldArray[index] = item;
     setSelectedLanguages(oldArray);
     setShowLanguagesDropdown(false);
@@ -69,7 +69,9 @@ const LanguageSelection = ({
         profile_image: UserReducer?.userData?.profile_image,
       };
 
-      await updateUserData(userData, accessToken);
+      await updateUserData(userData, accessToken).then(() =>
+        setShowSuccessModal(true),
+      );
     } else {
       setShowIncompleteFormAlert(true);
     }
@@ -87,8 +89,8 @@ const LanguageSelection = ({
 
   const _onPressBin = item => {
     if (selectedLanguages?.length > 1 && selectedLanguages?.length <= LIMIT) {
-      const index = selectedLanguages.findIndex(
-        x => x.id === selectedOption.id,
+      const index = selectedLanguages?.findIndex(
+        x => x.id === selectedOption?.id,
       );
       const oldArray = [...selectedLanguages];
       oldArray.splice(index, 1);
@@ -102,7 +104,10 @@ const LanguageSelection = ({
     if (UserReducer?.errorModal?.status === true) {
       setShowErrorModal(true);
     }
-  }, [UserReducer]);
+    if (UserReducer?.errorModal?.status === false) {
+      setShowErrorModal(false);
+    }
+  }, [UserReducer?.errorModal]);
 
   useEffect(() => {
     setErrorModal();
@@ -123,7 +128,7 @@ const LanguageSelection = ({
       selectedRows = [...selectedLanguages],
       ids = new Set(selectedRows.map(({id}) => id));
 
-    deSelectedRows = deSelectedRows.filter(({id}) => !ids.has(id));
+    deSelectedRows = deSelectedRows.filter(({id}) => !ids?.has(id));
 
     console.log(deSelectedRows);
     setLangugaes(deSelectedRows);
@@ -132,7 +137,6 @@ const LanguageSelection = ({
     checkAllElements();
   }, [selectedLanguages]);
 
-  
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
@@ -140,14 +144,14 @@ const LanguageSelection = ({
           backgroundColor={colors.themePurple1}
           barStyle="light-content"
         />
-        <Header showBackBtn={true} navigation={navigation} />
+        <Header title="Update Languages" navigation={navigation} />
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Langugae Dropdown  */}
-          <Heading
+          {/* <Heading
             title="Update Languages"
             passedStyle={styles.heading}
             fontType="semi-bold"
-          />
+          /> */}
           {selectedLanguages?.map((ele, index) => (
             <TouchableOpacity
               key={index}
@@ -285,6 +289,14 @@ const LanguageSelection = ({
             isModalVisible={showUpdateFailedModal}
             setIsModalVisible={setShowUpdateFailedModal}
             onPress={() => setErrorModal()}
+          />
+        )}
+        {showSuccessModal && (
+          <AlertModal
+            title="Success!"
+            message={`Languages have been updated.`}
+            isModalVisible={showSuccessModal}
+            setIsModalVisible={setShowSuccessModal}
           />
         )}
       </SafeAreaView>

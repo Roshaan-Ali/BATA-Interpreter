@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Image, Dimensions, ScrollView} from 'react-native';
 import MapViewDirections from 'react-native-maps-directions';
 
@@ -16,23 +16,26 @@ import {imageUrl} from '../config/config';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-function Home({navigation, UserReducer}) {
+function Home({
+  navigation,
+  UserReducer,
+  getCurrentLocation,
+  getBookingHistory,
+  getReviewsAndRatingsCount,
+}) {
   const currentBooking = UserReducer?.currentBooking;
   const [mapRef, setMapRef] = useState(null);
+  const accessToken = UserReducer?.accessToken;
 
-  const [coordinates, setCoordinates] = useState([
-    {
-      latitude: 48.8587741,
-      longitude: 2.2069771,
-    },
-    {
-      latitude: 48.8323785,
-      longitude: 2.3361663,
-    },
-  ]);
   const username = UserReducer?.userData?.first_name;
+  // console.log(JSON.stringify(UserReducer, null, 2));
 
-  console.log(UserReducer?.totalReviews);
+  useEffect(() => {
+    getCurrentLocation();
+    getBookingHistory(accessToken);
+    getReviewsAndRatingsCount(accessToken);
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* Header  */}
@@ -121,7 +124,12 @@ function Home({navigation, UserReducer}) {
             </View>
             <Heading
               passedStyle={styles.textStyle}
-              title={`${UserReducer?.totalReviews} Reviews`}
+              title={
+                UserReducer?.totalReviews === undefined ||
+                UserReducer?.totalReviews === null
+                  ? '0 Reviews'
+                  : `${UserReducer?.totalReviews} Reviews`
+              }
               fontType="regular"
             />
           </TouchableOpacity>
@@ -136,22 +144,22 @@ function Home({navigation, UserReducer}) {
             style={{width: width * 0.8, height: height * 0.36}}
             showsMyLocationButton={true}
             zoomEnabled={true}
-            onMapReady={() => {
-              mapRef.fitToCoordinates([coordinates[0], coordinates[1]], {
-                animated: true,
-                edgePadding: {
-                  top: 150,
-                  right: 50,
-                  bottom: 100,
-                  left: 50,
-                },
-              });
-            }}
+            // onMapReady={() => {
+            //   mapRef.fitToCoordinates([coordinates[0], coordinates[1]], {
+            //     animated: true,
+            //     edgePadding: {
+            //       top: 150,
+            //       right: 50,
+            //       bottom: 100,
+            //       left: 50,
+            //     },
+            //   });
+            // }}
             onLayout={() => {
               mapRef.animateCamera({
                 center: {
-                  latitude: coordinates[0].latitude,
-                  longitude: coordinates[0].longitude,
+                  latitude: UserReducer?.coords?.lat,
+                  longitude: UserReducer?.coords?.lng,
                 },
                 heading: 0,
                 pitch: 90,
@@ -159,8 +167,14 @@ function Home({navigation, UserReducer}) {
             }}
             scrollEnabled={true}
             initialRegion={{
-              latitude: coordinates[0].latitude,
-              longitude: coordinates[0].longitude,
+              latitude: UserReducer?.coords?.lat,
+              longitude: UserReducer?.coords?.lng,
+              latitudeDelta: 0.0622,
+              longitudeDelta: 0.0121,
+            }}
+            region={{
+              latitude: UserReducer?.coords?.lat,
+              longitude: UserReducer?.coords?.lng,
               latitudeDelta: 0.0622,
               longitudeDelta: 0.0121,
             }}
@@ -168,7 +182,7 @@ function Home({navigation, UserReducer}) {
             onRegionChangeComplete={e => {
               // console.log(e);
             }}>
-            <MapViewDirections
+            {/* <MapViewDirections
               origin={coordinates[0]}
               destination={coordinates[1]}
               apikey={
@@ -178,8 +192,13 @@ function Home({navigation, UserReducer}) {
               strokeWidth={4}
               strokeColor="#111111"
             />
-            <Marker coordinate={coordinates[0]} />
-            <Marker coordinate={coordinates[1]} />
+            <Marker coordinate={coordinates[0]} /> */}
+            <Marker
+              coordinate={{
+                latitude: UserReducer?.coords?.lat,
+                longitude: UserReducer?.coords?.lng,
+              }}
+            />
           </MapView>
         </View>
 
@@ -197,7 +216,7 @@ function Home({navigation, UserReducer}) {
               activeOpacity={0.8}
               // onPress={() => navigation.navigate('Searching')}
             >
-              <View style={[styles.rowView, {width:width * 0.57,}]}>
+              <View style={[styles.rowView, {width: width * 0.57}]}>
                 <Image
                   // resizeMode="contain"
                   source={
@@ -441,7 +460,7 @@ const styles = StyleSheet.create({
   popUpText: {
     fontSize: height * 0.025,
     color: 'black',
-    textTransform:'capitalize',
+    textTransform: 'capitalize',
     marginLeft: width * 0.03,
   },
   leftIconStyle: {

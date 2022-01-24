@@ -5,7 +5,8 @@ import LanguageSelection from './screens/LanguageSelection';
 import HomeScreensStack from './HomeScreensStack';
 import messaging from '@react-native-firebase/messaging';
 import {useNavigation} from '@react-navigation/native';
-import PushNotifications from './screens/PushNotifications';
+// import PushNotifications from './screens/PushNotifications';\
+import PushNotification, {Importance} from 'react-native-push-notification';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import ChangeLanguage from './screens/ChangeLanguage';
 import ChangePhoneNo from './screens/ChangePhoneNo';
@@ -25,13 +26,61 @@ const MainAppScreens = ({
   const [loading, setLoading] = useState(false);
   const [initialRoute, setInitialRoute] = useState('Home');
   const accessToken = UserReducer?.accessToken;
+  const id = UserReducer?.userData?.id;
 
   useEffect(() => {
+    messaging()
+      .getToken()
+      .then(token => {
+        console.log(token, 'AHSAN');
+      });
+
+  messaging().onNotificationOpenedApp(remoteMessage => {
+    console.log(
+      'Notification caused app to open from background state:',
+      remoteMessage.notification,
+    );
+  });
+  messaging()
+    .getInitialNotification()
+    .then(remoteMessage => {
+      if (remoteMessage) {
+        console.log(
+          'Notification caused app to open from quit state:',
+          remoteMessage.notification,
+        );
+      }
+    });
+  const unsubscribe = messaging().onMessage(remoteMessage => {
+    console.log(remoteMessage, 'Notification');
+
+    // Call api to get current booking data
+    if (remoteMessage?.data?.type == 'assign') {
+      getCurrentBooking(accessToken);
+      console.log('asgined');
+    }
+    if (remoteMessage.notification) {
+      console.log('agai====================================');
+      PushNotification.localNotification({
+        channelId: 'channel-id',
+        channelName: 'My channel',
+        message: remoteMessage.notification.body,
+        playSound: true,
+        title: remoteMessage.notification.title,
+        priority: 'high',
+        soundName: 'default',
+      });
+    }
+  });
+  
+    requestUserPermission();
+    // fcmNotificationsListener();
     getAllLanguages();
     getAllReviews(accessToken);
     getCurrentBooking(accessToken);
     getBookingHistory(accessToken);
     getReviewsAndRatingsCount(accessToken);
+    console.log('All Functions Ran!!!!!');
   }, []);
 
   const routes = [
@@ -60,12 +109,12 @@ const MainAppScreens = ({
     //   routeName: 'change phone no.',
     // },
 
-    {
-      id: 4,
-      iconName: 'info',
-      iconType: 'Foundation',
-      routeName: 'BATA information',
-    },
+    // {
+    //   id: 4,
+    //   iconName: 'info',
+    //   iconType: 'Foundation',
+    //   routeName: 'BATA information',
+    // },
     // {
     //   id: 5,
     //   iconName: 'settings-sharp',
@@ -81,13 +130,62 @@ const MainAppScreens = ({
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-      console.log('Authorization status:', authStatus);
+      console.log('Authorization status: AHSAN', authStatus);
     }
   };
 
-  useEffect(() => {
-    requestUserPermission();
-  }, []);
+  const fcmNotificationsListener = () => {
+    try {
+      messaging()
+        .getToken()
+        .then(token => {
+          console.log(token, 'AHSAN');
+        });
+
+      messaging().onNotificationOpenedApp(remoteMessage => {
+        console.log(
+          'Notification caused app to open from background state:',
+          remoteMessage.notification,
+        );
+      });
+      messaging()
+        .getInitialNotification()
+        .then(remoteMessage => {
+          if (remoteMessage) {
+            console.log(
+              'Notification caused app to open from quit state:',
+              remoteMessage.notification,
+            );
+          }
+        });
+      const unsubscribe = messaging().onMessage(remoteMessage => {
+        console.log(remoteMessage, 'Notification');
+
+        // Call api to get current booking data
+        if (remoteMessage?.data?.type == 'assign') {
+          getCurrentBooking(accessToken);
+          console.log('asgined');
+        }
+        if (remoteMessage.notification) {
+          console.log('agai====================================');
+          PushNotification.localNotification({
+            channelId: 'channel-id',
+            channelName: 'My channel',
+            message: remoteMessage.notification.body,
+            playSound: true,
+            title: remoteMessage.notification.title,
+            priority: 'high',
+            soundName: 'default',
+          });
+        }
+      });
+
+      return unsubscribe;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   if (loading) {
     return null;
   } else {

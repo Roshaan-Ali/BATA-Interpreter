@@ -21,7 +21,6 @@ const History = ({navigation, UserReducer}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
   const history =    UserReducer?.bookingHistory;
-  console.log(JSON.stringify(history,null,2))
   // UserReducer?.bookingHistory;
   const onItemPress = (item, index) => {
     setModalData(item);

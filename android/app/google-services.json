@@ -1,34 +1,77 @@
 {
   "project_info": {
-    "project_number": "1072953367403",
-    "project_id": "bata-interpreter",
-    "storage_bucket": "bata-interpreter.appspot.com"
+    "project_number": "385824149869",
+    "project_id": "bata-14b76",
+    "storage_bucket": "bata-14b76.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1072953367403:android:450d95015d229f7c180a2e",
+        "mobilesdk_app_id": "1:385824149869:android:f1526369159732a5090a64",
         "android_client_info": {
-          "package_name": "com.bata_interpreter"
+          "package_name": "com.bata"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1072953367403-j4kuvgt8f81r9o5d3icj1imqpc689pe7.apps.googleusercontent.com",
+          "client_id": "385824149869-7efcjn9qc5rel7j4jgq2oj08knmgrkej.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCZnxh9kBLhlLcm7WL_HJblQV337Ac5t9o"
+          "current_key": "AIzaSyAlvMl4sq_dg3Qy6GFp6Fupb65WxqTJhYA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1072953367403-j4kuvgt8f81r9o5d3icj1imqpc689pe7.apps.googleusercontent.com",
+              "client_id": "385824149869-7efcjn9qc5rel7j4jgq2oj08knmgrkej.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "385824149869-fo300562t0ja6a4no84ugtptotnhp6bv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bata"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385824149869:android:956b77464b3b5f57090a64",
+        "android_client_info": {
+          "package_name": "com.bata_interpreter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "385824149869-7efcjn9qc5rel7j4jgq2oj08knmgrkej.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlvMl4sq_dg3Qy6GFp6Fupb65WxqTJhYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "385824149869-7efcjn9qc5rel7j4jgq2oj08knmgrkej.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "385824149869-fo300562t0ja6a4no84ugtptotnhp6bv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bata"
+              }
             }
           ]
         }
