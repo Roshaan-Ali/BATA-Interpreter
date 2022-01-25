@@ -243,7 +243,6 @@ const SearchingScreen = ({navigation}) => {
               style={styles.workDoneView}
               activeOpacity={0.9}
               onPress={() => {
-                console.log('test');
                 navigation.navigate('Home');
               }}>
               <Heading title="Work Done" passedStyle={styles.workDone} />

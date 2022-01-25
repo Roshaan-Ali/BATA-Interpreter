@@ -32,7 +32,7 @@ const MainAppScreens = ({
     messaging()
       .getToken()
       .then(token => {
-        console.log(token, 'AHSAN');
+        // console.log(token, 'AHSAN');
       });
 
   messaging().onNotificationOpenedApp(remoteMessage => {
@@ -96,12 +96,12 @@ const MainAppScreens = ({
       iconType: 'MaterialIcons',
       routeName: 'history',
     },
-    {
-      id: 2,
-      iconName: 'language',
-      iconType: 'FontAwesome',
-      routeName: 'change language',
-    },
+    // {
+    //   id: 2,
+    //   iconName: 'language',
+    //   iconType: 'FontAwesome',
+    //   routeName: 'change language',
+    // },
     // {
     //   id: 3,
     //   iconName: 'phone',
@@ -134,57 +134,57 @@ const MainAppScreens = ({
     }
   };
 
-  const fcmNotificationsListener = () => {
-    try {
-      messaging()
-        .getToken()
-        .then(token => {
-          console.log(token, 'AHSAN');
-        });
+  // const fcmNotificationsListener = () => {
+  //   try {
+  //     messaging()
+  //       .getToken()
+  //       .then(token => {
+  //         console.log(token, 'AHSAN');
+  //       });
 
-      messaging().onNotificationOpenedApp(remoteMessage => {
-        console.log(
-          'Notification caused app to open from background state:',
-          remoteMessage.notification,
-        );
-      });
-      messaging()
-        .getInitialNotification()
-        .then(remoteMessage => {
-          if (remoteMessage) {
-            console.log(
-              'Notification caused app to open from quit state:',
-              remoteMessage.notification,
-            );
-          }
-        });
-      const unsubscribe = messaging().onMessage(remoteMessage => {
-        console.log(remoteMessage, 'Notification');
+  //     messaging().onNotificationOpenedApp(remoteMessage => {
+  //       console.log(
+  //         'Notification caused app to open from background state:',
+  //         remoteMessage.notification,
+  //       );
+  //     });
+  //     messaging()
+  //       .getInitialNotification()
+  //       .then(remoteMessage => {
+  //         if (remoteMessage) {
+  //           console.log(
+  //             'Notification caused app to open from quit state:',
+  //             remoteMessage.notification,
+  //           );
+  //         }
+  //       });
+  //     const unsubscribe = messaging().onMessage(remoteMessage => {
+  //       console.log(remoteMessage, 'Notification');
 
-        // Call api to get current booking data
-        if (remoteMessage?.data?.type == 'assign') {
-          getCurrentBooking(accessToken);
-          console.log('asgined');
-        }
-        if (remoteMessage.notification) {
-          console.log('agai====================================');
-          PushNotification.localNotification({
-            channelId: 'channel-id',
-            channelName: 'My channel',
-            message: remoteMessage.notification.body,
-            playSound: true,
-            title: remoteMessage.notification.title,
-            priority: 'high',
-            soundName: 'default',
-          });
-        }
-      });
+  //       // Call api to get current booking data
+  //       if (remoteMessage?.data?.type == 'assign') {
+  //         getCurrentBooking(accessToken);
+  //         console.log('asgined');
+  //       }
+  //       if (remoteMessage.notification) {
+  //         console.log('agai====================================');
+  //         PushNotification.localNotification({
+  //           channelId: 'channel-id',
+  //           channelName: 'My channel',
+  //           message: remoteMessage.notification.body,
+  //           playSound: true,
+  //           title: remoteMessage.notification.title,
+  //           priority: 'high',
+  //           soundName: 'default',
+  //         });
+  //       }
+  //     });
 
-      return unsubscribe;
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  //     return unsubscribe;
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
   if (loading) {
     return null;

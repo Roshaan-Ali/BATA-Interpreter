@@ -22,15 +22,12 @@ const height = Dimensions.get('window').height;
 
 const Otp = ({navigation, user_signup, route}) => {
   const OTP = '0000';
-  console.log(route.params);
 
   const _onConfirmOtp = code => {
     if (code == OTP) {
-      console.log(`Code is ${code}, you are good to go!`);
       user_signup({
         ...route.params,
       }).then(() => {
-        console.log('Otp Done');
       });
     } else {
       alert('Invalid OTP!');

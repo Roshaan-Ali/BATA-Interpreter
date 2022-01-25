@@ -12,6 +12,7 @@ import * as actions from '../store/actions/actions';
 import {connect} from 'react-redux';
 import IconComp from '../components/IconComp';
 import {imageUrl} from '../config/config';
+import {useIsFocused} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -20,21 +21,25 @@ function Home({
   navigation,
   UserReducer,
   getCurrentLocation,
+  getCurrentBooking,
   getBookingHistory,
   getReviewsAndRatingsCount,
 }) {
   const currentBooking = UserReducer?.currentBooking;
   const [mapRef, setMapRef] = useState(null);
   const accessToken = UserReducer?.accessToken;
+  const isFocused = useIsFocused();
 
   const username = UserReducer?.userData?.first_name;
-  // console.log(JSON.stringify(UserReducer, null, 2));
 
   useEffect(() => {
-    getCurrentLocation();
-    getBookingHistory(accessToken);
-    getReviewsAndRatingsCount(accessToken);
-  }, []);
+    if (isFocused) {
+      getCurrentLocation();
+      getReviewsAndRatingsCount(accessToken);
+      getCurrentBooking(accessToken);
+      console.log('Consolling from home screen');
+    }
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>
@@ -179,9 +184,7 @@ function Home({
               longitudeDelta: 0.0121,
             }}
             followsUserLocation
-            onRegionChangeComplete={e => {
-              // console.log(e);
-            }}>
+            onRegionChangeComplete={e => {}}>
             {/* <MapViewDirections
               origin={coordinates[0]}
               destination={coordinates[1]}

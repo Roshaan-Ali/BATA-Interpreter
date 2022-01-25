@@ -22,15 +22,12 @@ const Interpreter = ({navigation}) => {
   const [rateValue, setRateValue] = useState(5);
 
   const _onPressJoinDate = () => {
-    console.log('Join Date');
   };
 
   const _onPressLanguages = () => {
-    console.log('Languages');
   };
 
   const _onPressButton = item => {
-    console.log(item);
   };
   return (
     <View style={styles.container}>

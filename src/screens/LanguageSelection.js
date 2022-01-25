@@ -23,6 +23,7 @@ import ConfirmTranslatorModal from '../components/ConfirmTranslatorModal';
 import NoteToTranslatorModal from '../components/NoteToTranslatorModal';
 import AlertModal from '../components/AlertModal';
 import Header from '../components/Header';
+import {useIsFocused} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 
@@ -43,13 +44,11 @@ const LanguageSelection = ({
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showLanguagesDropdown, setShowLanguagesDropdown] = useState(false);
   const [showIncompleteFormAlert, setShowIncompleteFormAlert] = useState(false);
+  const isFocused = useIsFocused();
   const [showUpdateFailedModal, setShowUpdateFailedModal] = useState(
     UserReducer?.errorModal?.status,
   );
-  const [selectedLanguages, setSelectedLanguages] = useState(
-    UserReducer?.userData?.language,
-  );
-  // console.log(route.params);
+  const [selectedLanguages, setSelectedLanguages] = useState([]);
 
   const _onLanguageSelectionPress = item => {
     const oldArray = [...selectedLanguages];
@@ -89,9 +88,7 @@ const LanguageSelection = ({
 
   const _onPressBin = item => {
     if (selectedLanguages?.length > 1 && selectedLanguages?.length <= LIMIT) {
-      const index = selectedLanguages?.findIndex(
-        x => x.id === selectedOption?.id,
-      );
+      const index = selectedLanguages?.findIndex(x => x.id === item?.id);
       const oldArray = [...selectedLanguages];
       oldArray.splice(index, 1);
       setSelectedLanguages(oldArray);
@@ -110,9 +107,14 @@ const LanguageSelection = ({
   }, [UserReducer?.errorModal]);
 
   useEffect(() => {
-    setErrorModal();
-    getAllLanguages();
-  }, []);
+    if (isFocused) {
+      console.log('Consolling from language screen');
+      setErrorModal();
+      getAllLanguages().then(() => {
+        setSelectedLanguages(UserReducer?.userData?.language);
+      });
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     if (UserReducer?.errorModal?.status === true) {
@@ -130,7 +132,6 @@ const LanguageSelection = ({
 
     deSelectedRows = deSelectedRows.filter(({id}) => !ids?.has(id));
 
-    console.log(deSelectedRows);
     setLangugaes(deSelectedRows);
   };
   useEffect(() => {

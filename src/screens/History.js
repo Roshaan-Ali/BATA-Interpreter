@@ -11,27 +11,37 @@ import {
 import Header from '../components/Header';
 import HistoryModal from '../components/HistoryModal';
 import Heading from '../components/Heading';
+import * as actions from '../store/actions/actions';
 import IconComp from '../components/IconComp';
 import colors from '../assets/colors';
 import HistoryMapper from '../components/HistoryMapper';
 import {connect} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
 const {width, height} = Dimensions.get('window');
 
-const History = ({navigation, UserReducer}) => {
+const History = ({navigation, UserReducer, getBookingHistory}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalData, setModalData] = useState(null);
-  const history =    UserReducer?.bookingHistory;
-  // UserReducer?.bookingHistory;
+  const history = UserReducer?.bookingHistory;
+  const accessToken = UserReducer?.accessToken;
+  const isFocused = useIsFocused();
+
   const onItemPress = (item, index) => {
     setModalData(item);
     setIsModalVisible(true);
   };
 
+  useEffect(() => {
+    if (isFocused) {
+      getBookingHistory(accessToken);
+      console.log('Consolling from history screen');
+    }
+  }, [isFocused]);
   return (
     <>
       <View style={styles.container}>
         {/* Header  */}
-        <Header showBackBtn={true} navigation={navigation} />
+        <Header title="Booking History" navigation={navigation} />
 
         <FlatList
           data={history}
@@ -42,13 +52,13 @@ const History = ({navigation, UserReducer}) => {
           renderItem={({item, index}) => (
             <HistoryMapper item={item} index={index} />
           )}
-          ListHeaderComponent={() => (
-            <Heading
-              title="History"
-              passedStyle={styles.heading}
-              fontType="bold"
-            />
-          )}
+          // ListHeaderComponent={() => (
+          //   <Heading
+          //     title="History"
+          //     passedStyle={styles.heading}
+          //     fontType="bold"
+          //   />
+          // )}
           ListFooterComponent={() =>
             history?.length === 0 && (
               <Heading
@@ -56,9 +66,9 @@ const History = ({navigation, UserReducer}) => {
                 fontType={'semi-bold'}
                 passedStyle={{
                   fontSize: width * 0.045,
-                  marginTop:height * 0.02,
+                  marginTop: height * 0.02,
                   color: 'black',
-                  alignSelf:'center'
+                  alignSelf: 'center',
                 }}
               />
             )
@@ -79,7 +89,7 @@ const History = ({navigation, UserReducer}) => {
 const mapStateToProps = ({UserReducer}) => {
   return {UserReducer};
 };
-export default connect(mapStateToProps, null)(History);
+export default connect(mapStateToProps, actions)(History);
 
 const styles = StyleSheet.create({
   container: {

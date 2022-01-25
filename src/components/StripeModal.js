@@ -43,16 +43,13 @@ const StripeModal = ({onPress, isModalVisible, setIsModalVisible, setId}) => {
             marginVertical: 30,
           }}
           onCardChange={cardDetails => {
-            // console.log(cardDetails);
             if (cardDetails.complete) {
               createToken(cardDetails).then(res => {
-                // console.log(res);
                 setId(res.token.id)
               });
             }
           }}
           onFocus={focusedField => {
-            console.log('focusField', focusedField);
           }}
         />
         {/* Buttons Container  */}

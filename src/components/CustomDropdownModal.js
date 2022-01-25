@@ -19,7 +19,6 @@ const CustomDropdownModal = ({
   setIsModalVisible,
 }) => {
 
-  // console.log(array)
   return (
     <Modal
       isVisible={isModalVisible}

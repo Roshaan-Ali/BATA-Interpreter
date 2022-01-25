@@ -39,7 +39,6 @@ const Booking = ({navigation}) => {
   };
 
   const _onCancelPress = () => {
-    console.log('cancelled');
   };
 
   const _onBookNowPress = () => {
@@ -200,7 +199,6 @@ const Booking = ({navigation}) => {
         onConfirm={date => {
           setShowDatePicker(false);
           setDate(date);
-          console.log(date);
         }}
         onCancel={() => {
           setShowDatePicker(false);

@@ -22,10 +22,11 @@ const ReviewsMapper = ({item, index}) => {
     <View style={styles.container}>
       {/* Name and Image  */}
       <View style={styles.imageAndNameContainer}>
-        {console.log(`${imageUrl}${item?.client?.profile_image}`)}
         <Image
           source={
-            item?.client?.profile_image !== undefined
+            item?.client?.profile_image !== undefined &&
+            item?.client?.profile_image !== '' &&
+            item?.client?.profile_image !== null
               ? {uri: `${imageUrl}${item?.client?.profile_image}`}
               : 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg'
           }

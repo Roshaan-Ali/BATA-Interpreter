@@ -81,21 +81,22 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
                   label={route}
                   key={index}
                   onPress={() => {
-                    // console.log(route.routeName, currentScreenName);
-                    if (currentScreenName === route.routeName) {
-                      const resetAction = CommonActions.reset({
-                        index: 1,
-                        routes: [
-                          {
-                            name: route.routeName,
-                            // params: {YOUR_OPTIONAL_DATA}
-                          },
-                        ],
-                      });
-                      navigation.dispatch(resetAction);
-                    } else {
-                      navigation.navigate(route.routeName);
-                    }
+                    // if (currentScreenName === route.routeName) {
+                    //   const resetAction = CommonActions.reset({
+                    //     index: 1,
+                    //     routes: [
+                    //       {
+                    //         name: route.routeName,
+                    //         // params: {YOUR_OPTIONAL_DATA}
+                    //       },
+                    //     ],
+                    //   });
+                    //   navigation.dispatch(resetAction);
+                    // } else {
+                    //   navigation.navigate(route.routeName);
+                    // }
+
+                    navigation.navigate(route.routeName);
                   }}
                   currentScreenName={currentScreenName}
                   style={[styles.button]}

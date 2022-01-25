@@ -36,7 +36,6 @@ const Profile = ({
 }) => {
   let p_language = UserReducer?.languages;
   const accessToken = UserReducer.accessToken;
-  // console.log(JSON.stringify(UserReducer?.userData, null, 2));
   // image state
   const [userImage, setUserImage] = useState(null);
   // const [image, setImage] = useState(UserReducer?.userData?.profile_image);
@@ -100,7 +99,6 @@ const Profile = ({
         // setUserImage(
         //   `data:${response.assets[0].type};base64,${response.assets[0].base64}`,
         // );
-        // console.log(response.assets[0])
         setUserImage(response.assets[0]);
       }
     });

@@ -6,7 +6,6 @@ const DatePicker = ({date, setDate}) => {
   //   Date Picker
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || new Date();
-    // console.log("SADASD")
     setDate(currentDate);
   };
 

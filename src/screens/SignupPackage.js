@@ -20,14 +20,12 @@ const height = Dimensions.get('window').height;
 
 
 const SignupPackage = ({navigation, route}) => {
-    console.log(route.params)
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [stripeGeneratedKey, setStripeGeneratedKey] = useState('');
   const _onPressBuyNow = () => {
     if (stripeGeneratedKey === '') {
       alert('Card number is required');
     } else {
-      console.log(stripeGeneratedKey);
       navigation.navigate('Otp', route.params);
     }
   };

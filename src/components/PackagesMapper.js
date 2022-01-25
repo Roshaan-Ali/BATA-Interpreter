@@ -8,7 +8,6 @@ import PackageFeaturesMapper from './PackageFeaturesMapper';
 const {width, height} = Dimensions.get('window');
 
 const _onGetStartedPress = () => {
-  // console.log('Get Started');
 };
 
 const PackagesMapper = ({item, index, onPress}) => {

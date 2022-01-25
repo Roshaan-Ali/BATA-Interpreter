@@ -13,13 +13,15 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
+import {connect} from 'react-redux';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const Splash = ({navigation}) => {
+const Splash = ({navigation, UserReducer}) => {
   const _onPressSignUp = () => {
     navigation.navigate('LogIn');
   };
+  console.log(UserReducer);
   return (
     <ImageBackground source={background_img} style={styles.image}>
       <Image resizeMode="contain" source={logo} style={styles.logo} />
@@ -58,4 +60,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Splash;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, null)(Splash);

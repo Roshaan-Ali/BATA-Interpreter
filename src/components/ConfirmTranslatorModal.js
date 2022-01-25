@@ -21,7 +21,6 @@ const {width, height} = Dimensions.get('window');
 
 const ConfirmTranslatorModal = ({navigation, route}) => {
   const data = route.params;
-  // console.log({data});
   return (
     <View style={styles.mainContainerScreen}>
       <StatusBar translucent />

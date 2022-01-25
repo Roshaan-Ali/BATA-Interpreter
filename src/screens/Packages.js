@@ -17,7 +17,6 @@ const height = Dimensions.get('window').height;
 
 // on Packages Press
 const _onPackagePress = ({item, index}) => {
-  console.log('Pressed Pacakages');
 };
 
 const Packages = ({navigation}) => {

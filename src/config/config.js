@@ -1,5 +1,5 @@
-export const baseUrl = 'http://webprojectmockup.com:9443';
-// export const baseUrl = 'http://91b0-110-93-244-255.ngrok.io';
+// export const baseUrl = 'http://webprojectmockup.com:9443';
+export const baseUrl = 'http://98b2-110-93-244-255.ngrok.io';
 
 export const imageUrl = `${baseUrl}/public/profileImage/`;
 export const apiUrl = `${baseUrl}/api`;

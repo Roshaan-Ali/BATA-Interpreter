@@ -27,7 +27,6 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
-  // console.log('Login Screen UserReducer: ', UserReducer);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -36,7 +35,6 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
   const [showLoginFailedModal, setShowLoginFailedModal] = useState(
     UserReducer?.errorModal?.status,
   );
-  // console.log(JSON.stringify(UserReducer, null, 2));
 
 
 

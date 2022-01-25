@@ -20,7 +20,6 @@ const {width, height} = Dimensions.get('window');
 const Translator = ({navigation}) => {
   const [selectedValue, setSelectedValue] = useState(null);
   const [message, setMessage] = useState('');
-  // console.log(navigation.getState());
   const languages = [
     {label: 'Langugae 1', value: 'Langugae 1'},
     {label: 'Langugae 2', value: 'Langugae 2'},
