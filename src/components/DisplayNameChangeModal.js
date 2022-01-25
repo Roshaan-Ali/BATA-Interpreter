@@ -39,14 +39,21 @@ const DisplayNameChangeModal = ({
           passedStyle={styles.inputStyle}
           placeholderTilte="User Name"
         />
-
+        {text?.length === 0 && (
+          <Heading
+            passedStyle={[styles.label, {color: 'red'}]}
+            title="Name can't be empty"
+          />
+        )}
         {/* Buttons Container  */}
         <View style={styles.flexRow}>
           <Button
             title="DONE"
             onBtnPress={() => {
-              setValue(text);
-              setIsModalVisible(false);
+              if (text?.length !== 0) {
+                setValue(text);
+                setIsModalVisible(false);
+              }
             }}
             isBgColor={false}
             btnStyle={styles.btnStyle}
