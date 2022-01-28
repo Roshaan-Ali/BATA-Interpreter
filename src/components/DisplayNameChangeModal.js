@@ -37,12 +37,12 @@ const DisplayNameChangeModal = ({
           value={text}
           setTextValue={setText}
           passedStyle={styles.inputStyle}
-          placeholderTilte="User Name"
+          // placeholderTilte="User Name"
         />
         {text?.length === 0 && (
           <Heading
-            passedStyle={[styles.label, {color: 'red'}]}
-            title="Name can't be empty"
+            passedStyle={[styles.label, {color: 'red',fontSize: width * 0.035}]}
+            title="Name can't be empty."
           />
         )}
         {/* Buttons Container  */}
