@@ -35,44 +35,48 @@ const MainAppScreens = ({
         // console.log(token, 'AHSAN');
       });
 
-  messaging().onNotificationOpenedApp(remoteMessage => {
-    console.log(
-      'Notification caused app to open from background state:',
-      remoteMessage.notification,
-    );
-  });
-  messaging()
-    .getInitialNotification()
-    .then(remoteMessage => {
-      if (remoteMessage) {
-        console.log(
-          'Notification caused app to open from quit state:',
-          remoteMessage.notification,
-        );
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+    });
+    messaging()
+      .getInitialNotification()
+      .then(remoteMessage => {
+        if (remoteMessage) {
+          console.log(
+            'Notification caused app to open from quit state:',
+            remoteMessage.notification,
+          );
+        }
+      });
+    const unsubscribe = messaging().onMessage(remoteMessage => {
+      console.log(remoteMessage, 'Notification');
+
+      // Call api to get current booking data
+      if (
+        remoteMessage?.data?.type == 'assign' ||
+        remoteMessage?.data?.type == 'workDone'
+      ) {
+        getCurrentBooking(accessToken);
+        console.log('asgined');
+      }
+
+      if (remoteMessage.notification) {
+        console.log('agai====================================');
+        PushNotification.localNotification({
+          channelId: 'channel-id',
+          channelName: 'My channel',
+          message: remoteMessage.notification.body,
+          playSound: true,
+          title: remoteMessage.notification.title,
+          priority: 'high',
+          soundName: 'default',
+        });
       }
     });
-  const unsubscribe = messaging().onMessage(remoteMessage => {
-    console.log(remoteMessage, 'Notification');
 
-    // Call api to get current booking data
-    if (remoteMessage?.data?.type == 'assign') {
-      getCurrentBooking(accessToken);
-      console.log('asgined');
-    }
-    if (remoteMessage.notification) {
-      console.log('agai====================================');
-      PushNotification.localNotification({
-        channelId: 'channel-id',
-        channelName: 'My channel',
-        message: remoteMessage.notification.body,
-        playSound: true,
-        title: remoteMessage.notification.title,
-        priority: 'high',
-        soundName: 'default',
-      });
-    }
-  });
-  
     requestUserPermission();
     // fcmNotificationsListener();
     getAllLanguages();
