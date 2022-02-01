@@ -115,7 +115,7 @@ const Profile = ({
         language: UserReducer?.userData?.language?.map(ele => ele?.id),
         // profile_image:UserReducer?.userData?.profile_image
       };
-      await updateUserData(userData, accessToken);
+      await updateUserData(userData, accessToken, onSuccess);
       setUserImage(null);
     } else {
       const userData = {
@@ -124,10 +124,14 @@ const Profile = ({
         language: UserReducer?.userData?.language?.map(ele => ele?.id),
         // profile_image:UserReducer?.userData?.profile_image
       };
-      await updateUserData(userData, accessToken);
+      await updateUserData(userData, accessToken, onSuccess);
     }
-    setShowAlert(true);
+
     setIsLoading(false);
+  };
+
+  const onSuccess = () => {
+    setShowAlert(true);
   };
 
   // language selection

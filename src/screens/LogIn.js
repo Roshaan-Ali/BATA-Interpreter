@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   centerView: {
-    alignItems: 'center',
+    alignItems: 'center', paddingBottom:100,
   },
   forgotPassView: {
     flexDirection: 'row',

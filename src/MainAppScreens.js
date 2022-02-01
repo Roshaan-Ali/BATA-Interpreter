@@ -55,16 +55,17 @@ const MainAppScreens = ({
       console.log(remoteMessage, 'Notification');
 
       // Call api to get current booking data
-      if (
-        remoteMessage?.data?.type == 'assign' ||
-        remoteMessage?.data?.type == 'workDone'
-      ) {
+      if (remoteMessage?.data?.type == 'assign') {
         getCurrentBooking(accessToken);
-        console.log('asgined');
+        console.log('Job Assigned');
+      }
+
+      if (remoteMessage?.data?.type == 'workDone') {
+        getCurrentBooking(accessToken);
+        console.log('Job Completed');
       }
 
       if (remoteMessage.notification) {
-        console.log('agai====================================');
         PushNotification.localNotification({
           channelId: 'channel-id',
           channelName: 'My channel',

@@ -20,9 +20,9 @@ const height = Dimensions.get('window').height;
 function Home({
   navigation,
   UserReducer,
+  setErrorModal,
   getCurrentLocation,
   getCurrentBooking,
-  getBookingHistory,
   getReviewsAndRatingsCount,
 }) {
   const currentBooking = UserReducer?.currentBooking;
@@ -41,6 +41,9 @@ function Home({
     }
   }, [isFocused]);
 
+  useEffect(() => {
+    setErrorModal();
+  }, []);
   return (
     <View style={styles.container}>
       {/* Header  */}

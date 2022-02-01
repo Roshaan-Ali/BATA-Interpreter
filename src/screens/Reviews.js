@@ -7,16 +7,20 @@ import {color} from 'react-native-reanimated';
 import colors from '../assets/colors';
 import Header from '../components/Header';
 import * as actions from '../store/actions/actions';
+import { useIsFocused } from '@react-navigation/native';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const Reviews = ({navigation, UserReducer, getAllReviews}) => {
   const reviews = UserReducer?.reviews;
   const accessToken = UserReducer?.accessToken;
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getAllReviews(accessToken);
-  }, []);
+    if (isFocused == true) {
+      getAllReviews(accessToken);
+    }
+  }, [isFocused]);
   return (
     <View style={styles.container}>
       <Header title="Back" navigation={navigation} showBackBtn={true} />
@@ -46,7 +50,7 @@ const Reviews = ({navigation, UserReducer, getAllReviews}) => {
               passedStyle={{
                 fontSize: width * 0.045,
                 color: 'black',
-                marginLeft:width * 0.05
+                marginLeft: width * 0.05,
               }}
             />
           )

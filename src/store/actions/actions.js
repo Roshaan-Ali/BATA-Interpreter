@@ -2,10 +2,9 @@ import * as types from './actionType';
 import axios from 'axios';
 import {apiUrl} from '../../config/config';
 // import Geolocation from 'react-native-geolocation-service';
-import Geolocation from "@react-native-community/geolocation";
+import Geolocation from '@react-native-community/geolocation';
 
 export const user_login = data => async dispatch => {
-  console.log(data);
   try {
     const response = await axios.post(`${apiUrl}/users/signin`, {
       email: data.email,
@@ -13,7 +12,6 @@ export const user_login = data => async dispatch => {
     });
 
     if (response?.data?.success) {
-      console.log(response?.data?.data);
       // alert("SAD")
       dispatch({
         type: types.USER_LOGIN,
@@ -151,7 +149,7 @@ export const updatePhoto = (photo, token) => async dispatch => {
   }
 };
 
-export const updateUserData = (userData, token) => async dispatch => {
+export const updateUserData = (userData, token,onSuccess) => async dispatch => {
   console.log('UPDATE USER DATA FUNC', userData);
   try {
     const response = await axios({
@@ -164,15 +162,26 @@ export const updateUserData = (userData, token) => async dispatch => {
       },
     });
     // console.log(JSON.stringify(response.data.data, null, 2));
-    dispatch({
-      type: types.UPDATE_USER_DATA,
-      payload: response.data.data,
-    });
+    if (response?.data?.success) {
+      dispatch({
+        type: types.UPDATE_USER_DATA,
+        payload: response.data.data,
+      });
+      onSuccess();
+    } else {
+      dispatch({
+        type: types.ERROR_MODAL,
+        payload: {
+          msg: 'Something went wrong.',
+          status: true,
+        },
+      });
+    }
   } catch (error) {
     dispatch({
       type: types.ERROR_MODAL,
       payload: {
-        msg: 'Something went wrong.',
+        msg: error?.response?.data?.msg || "Something went wrong.",
         status: true,
       },
     });
@@ -205,7 +214,6 @@ export const getReviewsAndRatingsCount = token => async dispatch => {
         },
       },
     );
-    console.log(res.data);
     dispatch({
       type: types.GET_REVIEWS_RATINGS_COUNT,
       payload: res.data.data,
@@ -240,7 +248,7 @@ export const getAllReviews = token => async dispatch => {
         },
       },
     );
-    console.log(res?.data?.data);
+    console.log(res?.data.data);
     dispatch({
       type: types.GET_ALL_REVIEWS,
       payload: {
@@ -268,6 +276,11 @@ export const getCurrentBooking = token => async dispatch => {
       dispatch({
         type: types.GET_CURRENT_BOOKING,
         payload: response.data.data,
+      });
+    } else {
+      dispatch({
+        type: types.GET_CURRENT_BOOKING,
+        payload: null,
       });
     }
   } catch (err) {
@@ -298,7 +311,7 @@ export const getBookingHistory = token => async dispatch => {
   }
 };
 
-export const getCurrentLocation = () => async (dispatch) => {
+export const getCurrentLocation = () => async dispatch => {
   try {
     // dispatch({
     //   type: types.GET_CURRENT_LOC,
@@ -310,8 +323,7 @@ export const getCurrentLocation = () => async (dispatch) => {
 
     Geolocation.getCurrentPosition(
       //Will give you the current location
-      (position) => {
-        console.log(position, "ACTION");
+      position => {
         //getting the Longitude from the location json
         const currentLongitude = JSON.stringify(position.coords.longitude);
 
@@ -332,14 +344,14 @@ export const getCurrentLocation = () => async (dispatch) => {
         // //Setting Longitude state
         // setCurrentLatitude(currentLatitude);
       },
-      (error) => {
+      error => {
         console.log(error.message);
       },
       {
         enableHighAccuracy: false,
         timeout: 30000,
         maximumAge: 1000,
-      }
+      },
     );
     // const config = {
     //   enableHighAccuracy: true,
