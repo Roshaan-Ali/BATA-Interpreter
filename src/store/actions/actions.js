@@ -3,6 +3,7 @@ import axios from 'axios';
 import {apiUrl} from '../../config/config';
 // import Geolocation from 'react-native-geolocation-service';
 import Geolocation from "@react-native-community/geolocation";
+import messaging from '@react-native-firebase/messaging';
 
 export const user_login = data => async dispatch => {
   console.log(data);
@@ -97,9 +98,14 @@ export const user_signup = data => async dispatch => {
   }
 };
 
-export const user_logout = () => async dispatch => {
-  console.log('logout');
+export const user_logout = (id) => async dispatch => {
+  console.log('logout', id);
   try {
+    messaging().unsubscribeFromTopic
+    ('bata_interpreter' + id.toString())
+    .then( async () => {
+       console.log("UN-SUBSCRIBE")
+    });
     dispatch({
       type: types.USER_LOGOUT,
       payload: {isUserLogin: false},
@@ -269,6 +275,11 @@ export const getCurrentBooking = token => async dispatch => {
         type: types.GET_CURRENT_BOOKING,
         payload: response.data.data,
       });
+    }else{
+      dispatch({
+        type: types.GET_CURRENT_BOOKING,
+        payload: null
+      });
     }
   } catch (err) {
     console.log('Failed to fetch current booking!', err);
@@ -311,7 +322,7 @@ export const getCurrentLocation = () => async (dispatch) => {
     Geolocation.getCurrentPosition(
       //Will give you the current location
       (position) => {
-        console.log(position, "ACTION");
+        console.log(position, "ACTION @@@");
         //getting the Longitude from the location json
         const currentLongitude = JSON.stringify(position.coords.longitude);
 
@@ -367,3 +378,26 @@ export const getCurrentLocation = () => async (dispatch) => {
     console.log(err);
   }
 };
+export const cleanReduxAfterCompletingTask = () => async (dispatch) => {
+  try{
+    dispatch({
+      type: types.GET_CURRENT_BOOKING,
+      payload: null
+    });
+  }catch(err){
+    console.log(err)
+  }
+}
+
+export const firebaseMessagingData = (data) => async (dispatch) => {
+  try{
+    dispatch({
+      type: types.FIREBASE_DATA,
+      payload: {
+        firebaseData: data
+      }
+    });
+  }catch(err){
+    console.log(err)
+  }
+}

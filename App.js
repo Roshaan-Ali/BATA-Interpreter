@@ -4,11 +4,17 @@ import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
 import {persistor, store} from './src/store/index';
 import {PersistGate} from 'redux-persist/integration/react';
-
+import messaging from '@react-native-firebase/messaging';
 
 export default function App() {
   
+  async function registerAppWithFCM() {
+   await messaging().registerDeviceForRemoteMessages();
+
+  }
+
   useEffect(() => {
+    registerAppWithFCM()
     SplashScreen.hide();
   }, []);
   return (

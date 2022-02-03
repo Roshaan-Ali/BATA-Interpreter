@@ -23,9 +23,10 @@ const EXTRA_BOLD_ITALIC = 'Poppins-ExtraBoldItalic';
 const SEMI_BOLD = 'Poppins-SemiBold';
 const EXTRA_BOLD = 'Poppins-ExtraBold';
 const LIGHT = 'Poppins-Light';
-const Heading = ({title, passedStyle, fontType}) => {
+const Heading = ({title, passedStyle, fontType, nol}) => {
   return (
     <Text
+      numberOfLines={nol || 1}
       style={[
         styles.text,
         passedStyle,

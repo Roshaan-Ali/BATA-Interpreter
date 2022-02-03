@@ -175,11 +175,26 @@ const Profile = ({
                 // style={styles.imageStyle}
               />
             ) : (
+              <View style={{height: 180, width:180, justifyContent:'center',
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 1,
+                height: 2,
+              },
+              overflow:'visible',
+              backgroundColor:'white',
+
+              shadowOpacity: 0.24,
+              shadowRadius: 1.45,
+              borderRadius: 100,
+              elevation: 3,
+              }}>
               <Heading
                 passedStyle={styles.usernameWordsStyle}
                 title={fullName?.match(/\b(\w)/g).join('')}
                 fontType="extra-bold"
               />
+              </View>
             )}
             <TouchableOpacity
               style={styles.iconTouchable}
@@ -339,7 +354,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    top: height * -0.02,
+    // top: height * -0.02,
   },
   container: {
     flex: 1,
@@ -352,10 +367,10 @@ const styles = StyleSheet.create({
   },
   usernameWordsStyle: {
     fontSize: width * 0.12,
-    marginBottom: -20,
+    // marginBottom: -20,
     textTransform: 'uppercase',
     color: colors.themePurple1,
-    // backgroundColor:'red'
+    textAlign:'center'
   },
   btnStyle: {
     borderRadius: width * 0.02,
@@ -430,9 +445,10 @@ const styles = StyleSheet.create({
   },
   iconTouchable: {
     position: 'absolute',
-    top: height * 0.19,
-    right: width * 0.025,
-    // borderRadius: 30 / 0.2,
+      top: height * 0.19,
+      right: width * 0.025,
+      borderRadius: 50,
+       overflow:'hidden'
   },
   border_line: {
     borderBottomWidth: 1,

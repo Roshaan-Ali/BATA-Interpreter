@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.apple.xcode.dsym.org.reactjs.BATA-Interpreter</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>dSYM</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<false/>
+	<key>firebase_json_raw</key>
+	<string>eyJtZXNzYWdpbmdfYW5kcm9pZF9ub3RpZmljYXRpb25fY2hhbm5lbF9pZCI6ICJoaWdoLXByaW9yaXR5IiwgIm1lc3NhZ2luZ19pb3NfYXV0b19yZWdpc3Rlcl9mb3JfcmVtb3RlX21lc3NhZ2VzIjogZmFsc2V9</string>
+</dict>
+</plist>

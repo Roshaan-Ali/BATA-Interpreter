@@ -10,6 +10,8 @@ import {
   ScrollView,
   StatusBar,
   Platform,
+  KeyboardAvoidingView,
+  Keyboard,TouchableWithoutFeedback
 } from 'react-native';
 import Button from '../components/Button';
 import Inputbox from '../components/Inputbox';
@@ -65,7 +67,7 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
   }, [UserReducer?.errorModal]);
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
+      <SafeAreaView style={{ backgroundColor: '#EF2692'}}>
         {/* {Platform.OS == 'ios' && ( */}
         <AppStatusBar
           platform={Platform.OS}
@@ -74,7 +76,12 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
         />
         {/* )} */}
         <ImageBackground source={background_img} style={styles.image}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+          <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={styles.container}
+            >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.centerView}>
               <Image resizeMode="contain" source={logo} style={styles.logo} />
 
@@ -128,7 +135,7 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
                   onBtnPress={_onPressLogin}
                 />
               )}
-              <View style={styles.forgotPassView}>
+              {/* <View style={styles.forgotPassView}>
                 <Heading
                   passedStyle={styles.forgotPassTExt}
                   fontType="semi-bold"
@@ -142,9 +149,11 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
                     title="Click Here"
                   />
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
-          </ScrollView>
+            </TouchableWithoutFeedback>
+          {/* </ScrollView> */}
+          </KeyboardAvoidingView>
         </ImageBackground>
 
         {showAlertModal && (
@@ -185,13 +194,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    top: height * -0.02,
+    // top: height * -0.02,
   },
   container: {
     flex: 1,
   },
   centerView: {
     alignItems: 'center',
+    height: '100%',
+    width:'100%',
+    paddingVertical:10
+
   },
   forgotPassView: {
     flexDirection: 'row',
@@ -244,8 +257,9 @@ const styles = StyleSheet.create({
   //   height: height * 0.08,
   // },
   logo: {
-    width: width * 0.4,
-    marginTop: height * 0.1,
+    width: width * 0.5,
+    height: height * 0.35,
+    // marginTop: height * 0.1,
   },
 
   image: {

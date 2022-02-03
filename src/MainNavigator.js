@@ -54,6 +54,7 @@ function Main({UserReducer}) {
       messaging()
         .subscribeToTopic('bata_interpreter' + id?.toString())
         .then(() => {
+          console.log("SUBSCRIBE: "+ id?.toString())
         });
     }
   }, [UserReducer?.isUserLogin]);

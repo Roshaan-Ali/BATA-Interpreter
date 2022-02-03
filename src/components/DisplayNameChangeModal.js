@@ -91,12 +91,12 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.themePurple1,
-    width: width * 0.8,
+    // borderBottomColor: colors.themePurple1,
+    // width: width * 0.8,
     borderColor: 'white',
     fontSize: width * 0.04,
-    marginLeft: 0,
-    paddingLeft: 0,
+    // marginLeft: 0,
+    // paddingLeft: 0,?
     paddingVertical: 6,
     color: 'black',
     borderRadius: 0,

@@ -22,6 +22,7 @@ const {width, height} = Dimensions.get('window');
 
 const CustomButton = ({onPress, label, style, currentScreenName}) => {
   //   const thisRoute = useRoute();
+
   return (
     <TouchableOpacity
       // key={key}
@@ -51,13 +52,14 @@ const CustomButton = ({onPress, label, style, currentScreenName}) => {
   );
 };
 
-const CustomDrawer = ({navigation, routes, user_logout}) => {
+const CustomDrawer = ({navigation, routes, user_logout, UserReducer}) => {
   const isDrawerOpen = useDrawerStatus() === 'open';
   const history = navigation.getState().history;
   const currentScreenName = isDrawerOpen
     ? history[history?.length - 2].key.split('-')[0]
     : history[history?.length - 1].key.split('-')[0];
-
+    const id = UserReducer?.userData?.id;
+  
   const bottomLinks = [
     {
       id: 10,
@@ -112,7 +114,7 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
                   label={link}
                   key={index}
                   onPress={() => {
-                    user_logout();
+                    user_logout(id);
                   }}
                   currentScreenName={currentScreenName}
                   style={[styles.buttonSmall]}
@@ -125,8 +127,11 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
     </View>
   );
 };
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
 
-export default connect(null, actions)(CustomDrawer);
+export default connect(mapStateToProps, actions)(CustomDrawer);
 
 const styles = StyleSheet.create({
   menuContainer: {
