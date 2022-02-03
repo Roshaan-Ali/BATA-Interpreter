@@ -220,7 +220,7 @@ function Home({
             <TouchableOpacity
               style={styles.popUpBoxContainer}
               activeOpacity={0.8}
-              // onPress={() => navigation.navigate('Searching')}
+              onPress={() => navigation.navigate('Searching')}
             >
               <View style={[styles.rowView, {width: width * 0.57}]}>
                 <Image
