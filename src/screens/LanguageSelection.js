@@ -141,10 +141,10 @@ const LanguageSelection = ({
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
-        <AppStatusBar
+        {/* <AppStatusBar
           backgroundColor={colors.themePurple1}
           barStyle="light-content"
-        />
+        /> */}
         <Header title="Update Languages" navigation={navigation} />
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Langugae Dropdown  */}

@@ -67,11 +67,11 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
         {/* {Platform.OS == 'ios' && ( */}
-        <AppStatusBar
+        {/* <AppStatusBar
           platform={Platform.OS}
           backgroundColors={colors.themePurple1}
           barStyle="light-content"
-        />
+        /> */}
         {/* )} */}
         <ImageBackground source={background_img} style={styles.image}>
           <ScrollView showsVerticalScrollIndicator={false}>
@@ -128,7 +128,7 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
                   onBtnPress={_onPressLogin}
                 />
               )}
-              <View style={styles.forgotPassView}>
+              {/* <View style={styles.forgotPassView}>
                 <Heading
                   passedStyle={styles.forgotPassTExt}
                   fontType="semi-bold"
@@ -142,7 +142,7 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
                     title="Click Here"
                   />
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </ScrollView>
         </ImageBackground>
