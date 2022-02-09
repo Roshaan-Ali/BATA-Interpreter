@@ -115,7 +115,7 @@ const Profile = ({
         language: UserReducer?.userData?.language?.map(ele => ele?.id),
         // profile_image:UserReducer?.userData?.profile_image
       };
-      await updateUserData(userData, accessToken);
+      await updateUserData(userData, accessToken, onSuccess);
       setUserImage(null);
     } else {
       const userData = {
@@ -124,10 +124,14 @@ const Profile = ({
         language: UserReducer?.userData?.language?.map(ele => ele?.id),
         // profile_image:UserReducer?.userData?.profile_image
       };
-      await updateUserData(userData, accessToken);
+      await updateUserData(userData, accessToken, onSuccess);
     }
-    setShowAlert(true);
+
     setIsLoading(false);
+  };
+
+  const onSuccess = () => {
+    setShowAlert(true);
   };
 
   // language selection
@@ -148,10 +152,10 @@ const Profile = ({
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
-        <AppStatusBar
+        {/* <AppStatusBar
           backgroundColor={colors.themePurple1}
           barStyle="light-content"
-        />
+        /> */}
         {/* Header  */}
         <Header title="Back" showBackBtn={true} navigation={navigation} />
 
@@ -175,26 +179,11 @@ const Profile = ({
                 // style={styles.imageStyle}
               />
             ) : (
-              <View style={{height: 180, width:180, justifyContent:'center',
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 1,
-                height: 2,
-              },
-              overflow:'visible',
-              backgroundColor:'white',
-
-              shadowOpacity: 0.24,
-              shadowRadius: 1.45,
-              borderRadius: 100,
-              elevation: 3,
-              }}>
               <Heading
                 passedStyle={styles.usernameWordsStyle}
                 title={fullName?.match(/\b(\w)/g).join('')}
                 fontType="extra-bold"
               />
-              </View>
             )}
             <TouchableOpacity
               style={styles.iconTouchable}
@@ -354,7 +343,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    // top: height * -0.02,
+    top: height * -0.02,
   },
   container: {
     flex: 1,
@@ -367,10 +356,10 @@ const styles = StyleSheet.create({
   },
   usernameWordsStyle: {
     fontSize: width * 0.12,
-    // marginBottom: -20,
+    marginBottom: -20,
     textTransform: 'uppercase',
     color: colors.themePurple1,
-    textAlign:'center'
+    // backgroundColor:'red'
   },
   btnStyle: {
     borderRadius: width * 0.02,
@@ -445,10 +434,9 @@ const styles = StyleSheet.create({
   },
   iconTouchable: {
     position: 'absolute',
-      top: height * 0.19,
-      right: width * 0.025,
-      borderRadius: 50,
-       overflow:'hidden'
+    top: height * 0.19,
+    right: width * 0.025,
+    // borderRadius: 30 / 0.2,
   },
   border_line: {
     borderBottomWidth: 1,

@@ -6,15 +6,15 @@ import Geolocation from "@react-native-community/geolocation";
 import messaging from '@react-native-firebase/messaging';
 
 export const user_login = data => async dispatch => {
-  console.log(data);
+
   try {
     const response = await axios.post(`${apiUrl}/users/signin`, {
       email: data.email,
       password: data.password,
     });
 
+    console.log(response?.data?.data);
     if (response?.data?.success) {
-      console.log(response?.data?.data);
       // alert("SAD")
       dispatch({
         type: types.USER_LOGIN,
