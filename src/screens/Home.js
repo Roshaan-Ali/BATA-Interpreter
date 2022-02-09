@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Image, Dimensions, ScrollView} from 'react-native';
+import {StyleSheet, View, Image, Dimensions, ScrollView, StatusBar} from 'react-native';
 import MapViewDirections from 'react-native-maps-directions';
 
 import Heading from '../components/Heading';
@@ -20,9 +20,9 @@ const height = Dimensions.get('window').height;
 function Home({
   navigation,
   UserReducer,
-  setErrorModal,
   getCurrentLocation,
   getCurrentBooking,
+  getBookingHistory,
   getReviewsAndRatingsCount,
 }) {
   const currentBooking = UserReducer?.currentBooking;
@@ -41,18 +41,16 @@ function Home({
     }
   }, [isFocused]);
 
-  useEffect(() => {
-    setErrorModal();
-  }, []);
   return (
     <View style={styles.container}>
       {/* Header  */}
-      <Header title="Menu" navigation={navigation} />
 
+      <StatusBar translucent backgroundColor="transparent" />
       <ScrollView
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled={true}>
         {/* Greeting Container  */}
+        <Header title="Menu" navigation={navigation} />
         <View style={styles.greetingContainer}>
           <View style={{flexDirection: 'column', marginLeft: width * 0.05}}>
             <MotiView
@@ -215,68 +213,70 @@ function Home({
             fontType="bold"
             passedStyle={styles.ongoingLabel}
           />
-
-          {currentBooking ? (
-            <TouchableOpacity
-              style={styles.popUpBoxContainer}
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate('Searching')}
-            >
-              <View style={[styles.rowView, {width: width * 0.57}]}>
-                <Image
-                  // resizeMode="contain"
-                  source={
-                    // currentBooking?.client?.profile_image !== undefined &&
-                    // currentBooking?.client?.profile_image !== null &&
-                    // currentBooking?.client?.profile_image !== ""
-                    //   ? {
-                    //       uri: `${imageUrl}${currentBooking?.client?.profile_image}`,
-                    //     }
-                    //   :
-                    require('../assets/Images/Logo.png')
-                  }
-                  style={{
-                    width: width * 0.13,
-                    // backgroundColor:'red',
-                    borderRadius: width * 0.7,
-                    height: height * 0.07,
-                  }}
-                />
-                <View>
-                  <Heading
-                    passedStyle={styles.popUpText}
-                    title={currentBooking?.client?.first_name}
-                    fontType="bold"
+          <View style={{top: 10}}> 
+            {currentBooking ? (
+              <TouchableOpacity
+                style={styles.popUpBoxContainer}
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('Searching')}
+              >
+                <View style={[styles.rowView, {width: width * 0.57}]}>
+                  <Image
+                    // resizeMode="contain"
+                    source={
+                      // currentBooking?.client?.profile_image !== undefined &&
+                      // currentBooking?.client?.profile_image !== null &&
+                      // currentBooking?.client?.profile_image !== ""
+                      //   ? {
+                      //       uri: `${imageUrl}${currentBooking?.client?.profile_image}`,
+                      //     }
+                      //   :
+                      require('../assets/Images/Logo.png')
+                    }
+                    style={{
+                      width: width * 0.13,
+                      // backgroundColor:'red',
+                      borderRadius: width * 0.7,
+                      height: height * 0.07,
+                    }}
                   />
-                  <Heading
-                    passedStyle={styles.textMechanic}
-                    title={currentBooking?.translation_address}
-                    fontType="medium"
-                  />
+                  <View>
+                    <Heading
+                      passedStyle={styles.popUpText}
+                      title={currentBooking?.client?.first_name}
+                      fontType="bold"
+                    />
+                    <Heading
+                      passedStyle={styles.textMechanic}
+                      title={currentBooking?.translation_address}
+                      fontType="medium"
+                    />
+                  </View>
                 </View>
-              </View>
 
-              <IconComp
-                name="chevron-with-circle-right"
-                type={'Entypo'}
-                iconStyle={styles.leftIconStyle}
-              />
-            </TouchableOpacity>
-          ) : (
-            <View style={styles.noJobsView}>
-              <Image
-                resizeMode="contain"
-                source={require('../assets/Images/warn.png')}
-                style={styles.noJobImage}
-              />
-              <Heading
-                title="No job assigned yet."
-                passedStyle={styles.noJobTitle}
-              />
-            </View>
-          )}
+                <IconComp
+                  name="chevron-with-circle-right"
+                  type={'Entypo'}
+                  iconStyle={styles.leftIconStyle}
+                />
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.noJobsView}>
+                <Image
+                  resizeMode="contain"
+                  source={require('../assets/Images/warn.png')}
+                  style={styles.noJobImage}
+                />
+                <Heading
+                  title="No job assigned yet."
+                  passedStyle={styles.noJobTitle}
+                />
+              </View>
+            )}
+          </View>
         </View>
       </ScrollView>
+
     </View>
   );
 }
@@ -440,13 +440,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.04,
     justifyContent: 'space-between',
     borderRadius: width * 0.02,
-    // height: height * 0.15,
-    paddingVertical: height * 0.02,
+    height: height * 0.10,
+    // paddingVertical: height * 0.02,
     width: width * 0.85,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
-      height: 9,
+      height: 3,
+      width: 1
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,

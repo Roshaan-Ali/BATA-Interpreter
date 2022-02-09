@@ -32,7 +32,7 @@ const History = ({navigation, UserReducer, getBookingHistory}) => {
   };
 
   useEffect(() => {
-    if (isFocused == true) {
+    if (isFocused) {
       getBookingHistory(accessToken);
       console.log('Consolling from history screen');
     }

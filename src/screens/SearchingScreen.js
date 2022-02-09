@@ -53,65 +53,63 @@ const SearchingScreen = ({navigation, UserReducer, firebaseDataRedux}) => {
     longitudeDelta: LONGITUDE_DELTA,
   });
 
-  const placename = async () => {
+  const placename = async () =>{
     let placename;
     let state;
     let city;
     let country;
-    if (interpreter?.latitude) {
-      await axios
-        .get(`${googleMapURL}`, {
-          params: {
-            latlng: interpreter.latitude + ',' + interpreter.longitude,
-            key: googleKey,
-          },
-        })
-        .then(res => {
-          if (res.data.status == 'OK') {
-            placename = res.data.results[1].formatted_address;
-            console.log(placename);
-            onChangeCurrentLocation(placename);
-            // let arrayLoc = res.data.results[0].address_components;
-            // for (let i = 0; i < arrayLoc.length; i++) {
-            //     if (arrayLoc[i].types.includes('country')) {
-            //         country = arrayLoc[i].long_name;
-            //         console.log(country);
-            //     }
-            //     if (arrayLoc[i].types.includes('administrative_area_level_2')) {
+    if(interpreter?.latitude){
+      await axios.get(`${googleMapURL}`, {
+        params: {
+            latlng: interpreter.latitude + "," + interpreter.longitude,
+            key: googleKey
+        }
+      }).then((res)=>{
+        if (res.data.status == "OK") {
+          placename = res.data.results[1].formatted_address
+          console.log(placename)
+          onChangeCurrentLocation(placename)
+          // let arrayLoc = res.data.results[0].address_components;
+          // for (let i = 0; i < arrayLoc.length; i++) {
+          //     if (arrayLoc[i].types.includes('country')) {
+          //         country = arrayLoc[i].long_name;
+          //         console.log(country);
+          //     }
+          //     if (arrayLoc[i].types.includes('administrative_area_level_2')) {
 
-            //         state = arrayLoc[i].long_name;
-            //         console.log(state);
-            //     }
-            //     if (arrayLoc[i].types.includes('administrative_area_level_1')) {
+          //         state = arrayLoc[i].long_name;
+          //         console.log(state);
+          //     }
+          //     if (arrayLoc[i].types.includes('administrative_area_level_1')) {
 
-            //         city = arrayLoc[i].long_name;
-            //         console.log(city);
-            //     }
-            // }
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
+          //         city = arrayLoc[i].long_name;
+          //         console.log(city);
+          //     }
+          // }
+      } 
+
+      }).catch((err)=>{
+        console.log(err)
+      })
     }
-  };
+  }
 
-  useEffect(() => {
-    console.log(firebaseDataRedux?.firebaseData?.data?.type, 'REMOTE MESSAGE');
-    if (firebaseDataRedux?.firebaseData) {
-      if (firebaseDataRedux?.firebaseData?.data?.type == 'workDone') {
-        navigation.goBack();
+  useEffect(()=>{
+    console.log(firebaseDataRedux?.firebaseData?.data?.type, "REMOTE MESSAGE")
+    if(firebaseDataRedux?.firebaseData){
+      if(firebaseDataRedux?.firebaseData?.data?.type == "workDone"){
+        navigation.goBack()
       }
     }
-  }, [UserReducer]);
+  },[UserReducer])
 
-  useEffect(() => {
-    try {
-      placename();
-    } catch (err) {
-      console.log(err);
+  useEffect(()=>{
+    try{
+      placename()
+    }catch(err){
+      console.log(err)
     }
-  }, []);
+  },[])
 
   const [coordinates, setCoordinates] = useState([
     {
@@ -178,17 +176,17 @@ const SearchingScreen = ({navigation, UserReducer, firebaseDataRedux}) => {
   //   }, 5000);
   // }, [status]);
 
-  if (data) {
+  if(data){
     return (
       <View style={styles.container}>
         <StatusBar translucent backgroundColor="transparent" />
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
+          onPress={()=> navigation.goBack()}
           style={{
             height: 70,
             width: 70,
             zIndex: 1,
-
+  
             position: 'absolute',
           }}>
           <View
@@ -210,10 +208,10 @@ const SearchingScreen = ({navigation, UserReducer, firebaseDataRedux}) => {
               shadowOpacity: 0.25,
               shadowRadius: 3.84,
               elevation: 5,
-              alignItems: 'center',
-              justifyContent: 'center',
+              alignItems:'center',
+              justifyContent:'center'
             }}>
-            <Ionicons name="ios-arrow-back-outline" size={40} color={'black'} />
+             <Ionicons name='ios-arrow-back-outline' size={40} color={'black'}  />
           </View>
         </TouchableOpacity>
         {interpreter.latitude != null && userCoords.latitude != null ? (
@@ -311,137 +309,138 @@ const SearchingScreen = ({navigation, UserReducer, firebaseDataRedux}) => {
         ) : null}
         {/* Information View  */}
         <View style={styles.informationView}>
-          {/* Interpreter Details  */}
-          <View style={styles.interpreterView}>
-            {data?.client?.profile_image == null ? (
-              <Avatar.Image
-                size={85}
-                source={require('./../assets/Images/user.png')}
-              />
-            ) : (
-              <Avatar.Image
-                size={85}
-                source={{uri: `${imageUrl + data?.client?.profile_image}`}}
-              />
-            )}
-            {/* <Image
+              {/* Interpreter Details  */}
+              <View style={styles.interpreterView}>
+              {
+                    data?.client?.profile_image == null ?
+                    <Avatar.Image
+                      size={85}
+                      source={require('./../assets/Images/user.png')} 
+                    />:
+                    <Avatar.Image
+                    size={85}
+                    source={{uri: `${imageUrl+data?.client?.profile_image}`}} 
+                  />
+                  }
+                {/* <Image
                   resizeMode="contain"
                   source={PROFILE_IMAGE}
                   style={styles.imageStyle}
                 /> */}
-            <View style={styles.rowView}>
-              <Heading
-                title={data.client.first_name}
-                passedStyle={styles.usernameStyle}
-                fontType="semi-bold"
-              />
-              <Heading
-                title={data.occasion.name}
-                passedStyle={styles.userTypeStyle}
-              />
-            </View>
-          </View>
-
-          {/* Location Pick Point Details  */}
-          <View style={styles.detailView}>
-            <View style={styles.timelineView}>
-              <IconComp
-                type="FontAwesome"
-                name="dot-circle-o"
-                iconStyle={styles.eventStyle}
-              />
-              <View style={styles.verticalLine} />
-              <IconComp
-                type="Entypo"
-                name="location-pin"
-                iconStyle={styles.eventStyle}
-              />
-            </View>
-
-            <View style={styles.textView}>
-              <View style={styles.pickpoint1}>
-                <Heading
-                  title={'Current Location'}
-                  passedStyle={styles.pickupLabel}
-                  fontType="semi-bold"
-                />
-                <Heading
-                  title={currentLocation}
-                  passedStyle={styles.loctionLabel}
-                  nol={2}
-                />
+                <View style={styles.rowView}>
+                  <Heading
+                    title={data.client.first_name}
+                    passedStyle={styles.usernameStyle}
+                    fontType="semi-bold"
+                  />
+                  <Heading
+                    title={data.occasion.name}
+                    passedStyle={styles.userTypeStyle}
+                  />
+           
+                </View>
               </View>
-              <View style={styles.pickpoint2}>
-                <Heading
-                  title="Destination"
-                  passedStyle={styles.pickupLabel}
-                  fontType="semi-bold"
-                />
-                <Heading
-                  title={data.translation_address}
-                  passedStyle={styles.loctionLabel}
-                  nol={2}
-                />
+  
+              {/* Location Pick Point Details  */}
+              <View style={styles.detailView}>
+          
+                <View style={styles.timelineView}>
+                  <IconComp
+                    type="FontAwesome"
+                    name="dot-circle-o"
+                    iconStyle={styles.eventStyle}
+                  />
+                  <View style={styles.verticalLine} />
+                  <IconComp
+                    type="Entypo"
+                    name="location-pin"
+                    iconStyle={styles.eventStyle}
+                  />
+                </View>
+  
+         
+                <View style={styles.textView}>
+                  <View style={styles.pickpoint1}>
+                    <Heading
+                      title={"Current Location"}
+                      passedStyle={styles.pickupLabel}
+                      fontType="semi-bold"
+                    />
+                    <Heading
+                      title={currentLocation}
+                      passedStyle={styles.loctionLabel}
+                      nol={2}
+                    />
+                  </View>
+                  <View style={styles.pickpoint2}>
+                    <Heading
+                      title="Destination"
+                      passedStyle={styles.pickupLabel}
+                      fontType="semi-bold"
+                    />
+                    <Heading
+                      title={data.translation_address}
+                      passedStyle={styles.loctionLabel}
+                      nol={2}
+                    />
+                  </View>
+                  
+                </View>
               </View>
-            </View>
-          </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-              borderTopWidth: 1,
-              borderTopColor: 'rgba(0,0,0,0.08)',
-            }}>
-            <TouchableOpacity
-              style={styles.buttonWrapper}
-              activeOpacity={0.8}
-              onPress={() => Linking.openURL(`tel:${data.client.phone}`)}>
-              <IconComp
-                type="FontAwesome"
-                name="phone"
-                iconStyle={styles.buttonIconStyle}
-              />
-
-              <Heading
-                title="Call Now"
-                passedStyle={styles.buttonLabel}
-                fontType="medium"
-              />
-            </TouchableOpacity>
-
-            {/* Message  */}
-            <TouchableOpacity
-              onPress={() => {
-                // const num = `${parseInt(data.client.phone)}`
-                Linking.openURL(`sms:${data.client.phone}`);
-              }}
-              style={styles.buttonWrapper}
-              activeOpacity={0.8}>
-              <IconComp
-                type="FontAwesome"
-                name="envelope"
-                iconStyle={styles.buttonIconStyle}
-              />
-
-              <Heading
-                title="Message"
-                passedStyle={styles.buttonLabel}
-                fontType="medium"
-              />
-            </TouchableOpacity>
-          </View>
+              <View style={{
+                            flexDirection:'row', 
+                            justifyContent:'space-around', 
+                            alignItems:'center',
+                            borderTopWidth: 1,
+                            borderTopColor: 'rgba(0,0,0,0.08)',
+                          }}>
+                    <TouchableOpacity
+                      style={styles.buttonWrapper}
+                      activeOpacity={0.8}
+                      onPress={() => Linking.openURL(`tel:${data.client.phone}`)}>
+                      <IconComp
+                        type="FontAwesome"
+                        name="phone"
+                        iconStyle={styles.buttonIconStyle}
+                      />
+        
+                      <Heading
+                        title="Call Now"
+                        passedStyle={styles.buttonLabel}
+                        fontType="medium"
+                      />
+                    </TouchableOpacity>
+        
+                    {/* Message  */}
+                    <TouchableOpacity onPress={()=> {
+                          // const num = `${parseInt(data.client.phone)}`
+                          Linking.openURL(`sms:${data.client.phone}`)
+                    }} style={styles.buttonWrapper} activeOpacity={0.8}>
+                      <IconComp
+                        type="FontAwesome"
+                        name="envelope"
+                        iconStyle={styles.buttonIconStyle}
+                      />
+        
+                      <Heading
+                        title="Message"
+                        passedStyle={styles.buttonLabel}
+                        fontType="medium"
+                      />
+                    </TouchableOpacity>
+                  </View>
+              
         </View>
       </View>
-    );
-  } else {
-    return null;
+    )
+  }else{
+    return null
   }
 };
 
-const mapStateToProps = ({UserReducer, firebaseDataRedux}) => {
-  return {UserReducer, firebaseDataRedux};
+const mapStateToProps = ({UserReducer,firebaseDataRedux}) => {
+  return {UserReducer,firebaseDataRedux};
 };
 export default connect(mapStateToProps, actions)(SearchingScreen);
 

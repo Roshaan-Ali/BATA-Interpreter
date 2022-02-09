@@ -57,7 +57,7 @@ const SignUp = ({navigation}) => {
     }
   };
   const _onPresslogin = () => {
-    navigation.navigate('LogIn');
+    navigation.navigate('SignIn');
   };
 
   const _onPressShowPassword = () => {

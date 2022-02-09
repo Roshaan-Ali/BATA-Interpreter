@@ -10,6 +10,9 @@ import {
   ScrollView,
   StatusBar,
   Platform,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Button from '../components/Button';
 import Inputbox from '../components/Inputbox';
@@ -36,8 +39,6 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
     UserReducer?.errorModal?.status,
   );
 
-
-
   const _onPressShowPassword = () => {
     setIsShowPassword(!isShowPassword);
   };
@@ -47,7 +48,7 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
       setIsLoading(true);
 
       setTimeout(() => {
-        user_login({email :email, password:password});
+        user_login({email: email, password: password});
         setIsLoading(false);
       }, 2000);
     } else {
@@ -185,13 +186,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    top: height * -0.02,
+    // top: height * -0.02,
   },
   container: {
     flex: 1,
   },
   centerView: {
-    alignItems: 'center', paddingBottom:100,
+    alignItems: 'center',
+    // height: '100%',
+    // width: '100%',
+    paddingVertical: 10,
+    paddingBottom: 250,
   },
   forgotPassView: {
     flexDirection: 'row',
@@ -244,8 +249,9 @@ const styles = StyleSheet.create({
   //   height: height * 0.08,
   // },
   logo: {
-    width: width * 0.4,
-    marginTop: height * 0.1,
+    width: width * 0.5,
+    height: height * 0.35,
+    // marginTop: height * 0.1,
   },
 
   image: {

@@ -13,6 +13,7 @@ import {
   BOOKING_HISTORY,
   UPDATE_PHOTO,
   GET_CURRENT_LOC,
+
 } from '../actions/actionType';
 
 const initialData = {
@@ -37,6 +38,7 @@ const initialData = {
   bookingHistory: [],
   totalRatings: 0,
   totalReviews: 0,
+  firebaseData: null
 };
 
 export function UserReducer(state = initialData, action) {
@@ -131,6 +133,7 @@ export function UserReducer(state = initialData, action) {
         },
       };
 
+     
     case UPDATE_PHOTO:
       console.log(
         'UPDATE_PHOTO:::::: ',

@@ -17,6 +17,7 @@ import Button from '../components/Button';
 import CustomDropdownModal from '../components/CustomDropdownModal';
 import Heading from '../components/Heading';
 import IconComp from '../components/IconComp';
+moment.suppressDeprecationWarnings = true;
 const {width, height} = Dimensions.get('window');
 
 const Booking = ({navigation}) => {
@@ -63,7 +64,7 @@ const Booking = ({navigation}) => {
               setShowDatePicker(true);
             }}>
             <Heading
-              title={moment(date).format('dddd - MMMM - YYYY')}
+              title={moment(date,'dddd - MMMM - YYYY')}
               passedStyle={styles.additionalInfoText}
             />
           </TouchableOpacity>
@@ -78,7 +79,7 @@ const Booking = ({navigation}) => {
         {/* Selected Timing View  */}
         <View style={styles.dateView}>
           <Heading
-            title={`From ${moment(new Date()).format('HH:MM A')}`}
+            title={`From ${moment(new Date(),'HH:MM A')}`}
             passedStyle={styles.dateLanguage}
           />
           <IconComp
@@ -87,7 +88,7 @@ const Booking = ({navigation}) => {
             iconStyle={styles.caretRightLanguage}
           />
           <Heading
-            title={`To ${moment(date).format('HH:MM A')}`}
+            title={`To ${moment(date,'HH:MM A')}`}
             passedStyle={styles.dateLanguage}
           />
         </View>

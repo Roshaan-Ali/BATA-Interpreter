@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import Home from './Home';
-import LogIn from './LogIn';
+import SignIn from './SignIn';
 import SignUp from './SignUp';
 import Otp from './OTP';
 import Splash from './Splash';
@@ -21,7 +21,7 @@ function MainStackNavigator() {
         }}
         initialRouteName="Otp"
         >
-        <Stack.Screen name="LogIn" component={LogIn} />
+        <Stack.Screen name="SignIn" component={SignIn} />
 
         <Stack.Screen name="Home" component={Home} />
 

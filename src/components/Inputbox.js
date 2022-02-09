@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView, Keyboard
 } from 'react-native';
 
 import IconComp from './IconComp';
@@ -28,7 +29,19 @@ const Inputbox = ({
   passedStyle,
 }) => {
   return (
-    <View style={{position: 'relative'}}>
+    <View style={{
+      position: 'relative', 
+      alignItems:'center', 
+      width: '90%', 
+      justifyContent:'space-around', 
+      flexDirection:'row',
+      borderColor: '#E3E3E3',
+      borderRadius: 15,
+      borderWidth: 1,
+      padding: 10,
+      margin: 10,
+       height: 80
+      }}>
       <TextInput
         style={[
           styles.input,
@@ -47,9 +60,10 @@ const Inputbox = ({
       {isShowIcon && isPassword ? (
         <TouchableOpacity
           style={{
-            position: 'absolute',
-            left: width * 0.75,
-            top: height * 0.046,
+            // position: 'absolute',
+            // left: width * 0.75,
+            // top: height * 0.046,
+            
             // paddingLeft: 10,
           }}
           onPress={() => onPressIcon()}>
@@ -66,11 +80,11 @@ const Inputbox = ({
           name={names}
           type={'MaterialIcons'}
           iconStyle={{
-            paddingLeft: isShowIcon && isPassword && width * 0.02,
-            position: 'absolute',
-            left: width * 0.75,
+            // paddingLeft: isShowIcon && isPassword && width * 0.02,
+            // position: 'absolute',
+            // left: width * 0.75,
             // paddingLeft: 10,
-            top: height * 0.046,
+            // top: height * 0.046,
           }}
         />
       )}
@@ -81,16 +95,17 @@ const styles = StyleSheet.create({
   input: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
     fontFamily: 'Poppins-Regular',
-    borderColor: '#E3E3E3',
-    borderRadius: 15,
+    // borderColor: '#E3E3E3',
+    // borderRadius: 15,
+     // borderWidth: 1,
     color: '#E3E3E3',
-    width: width * 0.8,
-    margin: height * 0.025,
-    // height: height * 0.09,
-    paddingRight: width * 0.07,
-    paddingLeft: width * 0.05,
+    width: 280,
+    // backgroundColor:'red',
+    margin: height * 0.02,
+    height: height * 0.09,
+    // paddingRight: width * 0.07,
+    // paddingLeft: width * 0.05,
     fontSize: width * 0.045,
   },
 });

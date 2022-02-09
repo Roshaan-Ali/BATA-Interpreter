@@ -2,9 +2,11 @@ import * as types from './actionType';
 import axios from 'axios';
 import {apiUrl} from '../../config/config';
 // import Geolocation from 'react-native-geolocation-service';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from "@react-native-community/geolocation";
+import messaging from '@react-native-firebase/messaging';
 
 export const user_login = data => async dispatch => {
+  console.log(data);
   try {
     const response = await axios.post(`${apiUrl}/users/signin`, {
       email: data.email,
@@ -12,6 +14,7 @@ export const user_login = data => async dispatch => {
     });
 
     if (response?.data?.success) {
+      console.log(response?.data?.data);
       // alert("SAD")
       dispatch({
         type: types.USER_LOGIN,
@@ -95,9 +98,14 @@ export const user_signup = data => async dispatch => {
   }
 };
 
-export const user_logout = () => async dispatch => {
-  console.log('logout');
+export const user_logout = (id) => async dispatch => {
+  console.log('logout', id);
   try {
+    messaging().unsubscribeFromTopic
+    ('bata_interpreter' + id.toString())
+    .then( async () => {
+       console.log("UN-SUBSCRIBE")
+    });
     dispatch({
       type: types.USER_LOGOUT,
       payload: {isUserLogin: false},
@@ -149,7 +157,7 @@ export const updatePhoto = (photo, token) => async dispatch => {
   }
 };
 
-export const updateUserData = (userData, token,onSuccess) => async dispatch => {
+export const updateUserData = (userData, token) => async dispatch => {
   console.log('UPDATE USER DATA FUNC', userData);
   try {
     const response = await axios({
@@ -162,26 +170,15 @@ export const updateUserData = (userData, token,onSuccess) => async dispatch => {
       },
     });
     // console.log(JSON.stringify(response.data.data, null, 2));
-    if (response?.data?.success) {
-      dispatch({
-        type: types.UPDATE_USER_DATA,
-        payload: response.data.data,
-      });
-      onSuccess();
-    } else {
-      dispatch({
-        type: types.ERROR_MODAL,
-        payload: {
-          msg: 'Something went wrong.',
-          status: true,
-        },
-      });
-    }
+    dispatch({
+      type: types.UPDATE_USER_DATA,
+      payload: response.data.data,
+    });
   } catch (error) {
     dispatch({
       type: types.ERROR_MODAL,
       payload: {
-        msg: error?.response?.data?.msg || "Something went wrong.",
+        msg: 'Something went wrong.',
         status: true,
       },
     });
@@ -214,6 +211,7 @@ export const getReviewsAndRatingsCount = token => async dispatch => {
         },
       },
     );
+    console.log(res.data);
     dispatch({
       type: types.GET_REVIEWS_RATINGS_COUNT,
       payload: res.data.data,
@@ -248,7 +246,7 @@ export const getAllReviews = token => async dispatch => {
         },
       },
     );
-    console.log(res?.data.data);
+    console.log(res?.data, "=====================================");
     dispatch({
       type: types.GET_ALL_REVIEWS,
       payload: {
@@ -277,10 +275,10 @@ export const getCurrentBooking = token => async dispatch => {
         type: types.GET_CURRENT_BOOKING,
         payload: response.data.data,
       });
-    } else {
+    }else{
       dispatch({
         type: types.GET_CURRENT_BOOKING,
-        payload: null,
+        payload: null
       });
     }
   } catch (err) {
@@ -311,7 +309,7 @@ export const getBookingHistory = token => async dispatch => {
   }
 };
 
-export const getCurrentLocation = () => async dispatch => {
+export const getCurrentLocation = () => async (dispatch) => {
   try {
     // dispatch({
     //   type: types.GET_CURRENT_LOC,
@@ -323,7 +321,8 @@ export const getCurrentLocation = () => async dispatch => {
 
     Geolocation.getCurrentPosition(
       //Will give you the current location
-      position => {
+      (position) => {
+        console.log(position, "ACTION @@@");
         //getting the Longitude from the location json
         const currentLongitude = JSON.stringify(position.coords.longitude);
 
@@ -344,14 +343,14 @@ export const getCurrentLocation = () => async dispatch => {
         // //Setting Longitude state
         // setCurrentLatitude(currentLatitude);
       },
-      error => {
+      (error) => {
         console.log(error.message);
       },
       {
         enableHighAccuracy: false,
         timeout: 30000,
         maximumAge: 1000,
-      },
+      }
     );
     // const config = {
     //   enableHighAccuracy: true,
@@ -379,3 +378,26 @@ export const getCurrentLocation = () => async dispatch => {
     console.log(err);
   }
 };
+export const cleanReduxAfterCompletingTask = () => async (dispatch) => {
+  try{
+    dispatch({
+      type: types.GET_CURRENT_BOOKING,
+      payload: null
+    });
+  }catch(err){
+    console.log(err)
+  }
+}
+
+export const firebaseMessagingData = (data) => async (dispatch) => {
+  try{
+    dispatch({
+      type: types.FIREBASE_DATA,
+      payload: {
+        firebaseData: data
+      }
+    });
+  }catch(err){
+    console.log(err)
+  }
+}
