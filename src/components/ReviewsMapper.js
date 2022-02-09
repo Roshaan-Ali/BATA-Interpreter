@@ -28,7 +28,9 @@ const ReviewsMapper = ({item, index}) => {
             item?.client?.profile_image !== '' &&
             item?.client?.profile_image !== null
               ? {uri: `${imageUrl}${item?.client?.profile_image}`}
-              : 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg'
+              : {
+                  uri: 'https://icon-library.com/images/no-user-image-icon/no-user-image-icon-27.jpg',
+                }
           }
           style={styles.photo}
           // resizeMode="contain"
