@@ -4,6 +4,7 @@ import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
 import {persistor, store} from './src/store/index';
 import {PersistGate} from 'redux-persist/integration/react';
+import Test from "./src/screens/Test"
 
 
 export default function App() {
@@ -12,10 +13,11 @@ export default function App() {
     SplashScreen.hide();
   }, []);
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <MainNavigator />
-      </PersistGate>
-    </Provider>
+    <Test/>
+    // <Provider store={store}>
+    //   <PersistGate loading={null} persistor={persistor}>
+    //     <MainNavigator />
+    //   </PersistGate>
+    // </Provider>
   );
 }

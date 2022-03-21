@@ -269,7 +269,10 @@ const Profile = ({
               <Button
                 title="SAVE"
                 btnStyle={styles.btnStyle}
-                onBtnPress={() => _onPressSave()}
+                onBtnPress={
+                  () => navigation?.goBack()
+                  // _onPressSave()
+                }
                 btnTextStyle={styles.btnTextColor}
                 isBgColor={false}
               />
